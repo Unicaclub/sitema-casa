@@ -1,0 +1,72 @@
+{
+    "name": "empresa/erp-sistema",
+    "description": "Sistema ERP Completo com Arquitetura Modular",
+    "type": "project",
+    "keywords": ["erp", "business", "management", "php", "modular"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ERP Team",
+            "email": "dev@empresa.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-redis": "*",
+        "vlucas/phpdotenv": "^5.4",
+        "monolog/monolog": "^3.0",
+        "firebase/php-jwt": "^6.0",
+        "phpoffice/phpspreadsheet": "^1.24",
+        "dompdf/dompdf": "^2.0",
+        "swiftmailer/swiftmailer": "^6.3",
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^1.8",
+        "squizlabs/php_codesniffer": "^3.7",
+        "vimeo/psalm": "^4.30"
+    },
+    "autoload": {
+        "psr-4": {
+            "ERP\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ERP\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-html coverage",
+        "analyse": "phpstan analyse src",
+        "psalm": "psalm",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "quality": [
+            "@cs-check",
+            "@analyse",
+            "@test"
+        ],
+        "post-autoload-dump": [
+            "@php artisan clear-compiled",
+            "@php artisan optimize"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
