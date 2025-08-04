@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque - Sistema ERP</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/dashboard.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fas fa-chart-line"></i>
+                    <span>ERP Sistema</span>
+                </div>
+                <button class="toggle-btn" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-menu">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="crm.html" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>CRM</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="estoque.html" class="nav-link">
+                            <i class="fas fa-boxes"></i>
+                            <span>Estoque</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="vendas.html" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Vendas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="financeiro.html" class="nav-link">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Financeiro</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="relatorios.html" class="nav-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Relatórios</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="configuracoes.html" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 class="page-title">
+                        <i class="fas fa-boxes"></i>
+                        Gestão de Estoque
+                    </h1>
+                    <p class="page-subtitle">Controle completo de produtos e movimentações</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <span class="user-name" id="userName">Carregando...</span>
+                            <span class="user-email" id="userEmail">Carregando...</span>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="totalProdutos">0</span>
+                        <span class="stat-label">Total Produtos</span>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="alertasEstoque">0</span>
+                        <span class="stat-label">Alertas Estoque</span>
+                    </div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="valorEstoque">R$ 0,00</span>
+                        <span class="stat-label">Valor Total</span>
+                    </div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="movimentacoesMes">0</span>
+                        <span class="stat-label">Movim. do Mês</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="actions-bar">
+                <div class="actions-left">
+                    <button class="btn btn-primary" id="btnNovoProduto">
+                        <i class="fas fa-plus"></i>
+                        Novo Produto
+                    </button>
+                    <button class="btn btn-secondary" id="btnMovimentacao">
+                        <i class="fas fa-exchange-alt"></i>
+                        Movimentação
+                    </button>
+                    <button class="btn btn-info" id="btnRelatorio">
+                        <i class="fas fa-file-pdf"></i>
+                        Relatório
+                    </button>
+                </div>
+                <div class="actions-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar produtos..." id="searchInput">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="filtroCategoria">
+                            <option value="">Todas Categorias</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="content-section">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Lista de Produtos</h3>
+                        <div class="table-actions">
+                            <button class="btn-icon" id="btnRefresh" title="Atualizar">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="btn-icon" id="btnExportar" title="Exportar">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table" id="produtosTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="selectAll">
+                                    </th>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Quantidade</th>
+                                    <th>Estoque Mín.</th>
+                                    <th>Preço Custo</th>
+                                    <th>Preço Venda</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produtosTableBody">
+                                <!-- Dados carregados via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-footer">
+                        <div class="table-info">
+                            <span id="tableInfo">Carregando...</span>
+                        </div>
+                        <div class="pagination" id="pagination">
+                            <!-- Paginação gerada via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Section -->
+            <div class="content-section" id="alertsSection">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        Alertas de Estoque
+                    </h3>
+                </div>
+                <div class="alerts-grid" id="alertsGrid">
+                    <!-- Alertas carregados via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Novo/Editar Produto -->
+    <div class="modal" id="modalProduto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Novo Produto</h3>
+                <button class="close" id="closeProdutoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="produtoForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="sku">SKU/Código *</label>
+                            <input type="text" id="sku" name="sku" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nome">Nome do Produto *</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria">Categoria *</label>
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="unidade">Unidade</label>
+                            <select id="unidade" name="unidade">
+                                <option value="UN">Unidade</option>
+                                <option value="KG">Quilograma</option>
+                                <option value="LT">Litro</option>
+                                <option value="MT">Metro</option>
+                                <option value="M2">Metro²</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantidadeAtual">Quantidade Atual</label>
+                            <input type="number" id="quantidadeAtual" name="quantidade_atual" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="estoqueMinimo">Estoque Mínimo *</label>
+                            <input type="number" id="estoqueMinimo" name="estoque_minimo" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="precoCusto">Preço de Custo</label>
+                            <input type="text" id="precoCusto" name="preco_custo" class="money-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="precoVenda">Preço de Venda *</label>
+                            <input type="text" id="precoVenda" name="preco_venda" class="money-input" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <textarea id="descricao" name="descricao" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelProduto">Cancelar</button>
+                <button type="submit" class="btn btn-primary" form="produtoForm" id="saveProduto">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Movimentação -->
+    <div class="modal" id="modalMovimentacao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Movimentação</h3>
+                <button class="close" id="closeMovimentacaoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="movimentacaoForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="produtoMovimentacao">Produto *</label>
+                            <select id="produtoMovimentacao" name="produto_id" required>
+                                <option value="">Selecione um produto...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoMovimentacao">Tipo *</label>
+                            <select id="tipoMovimentacao" name="tipo" required>
+                                <option value="">Selecione...</option>
+                                <option value="entrada">Entrada</option>
+                                <option value="saida">Saída</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantidadeMovimentacao">Quantidade *</label>
+                            <input type="number" id="quantidadeMovimentacao" name="quantidade" min="0.01" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valorUnitario">Valor Unitário</label>
+                            <input type="text" id="valorUnitario" name="valor_unitario" class="money-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="motivoMovimentacao">Motivo *</label>
+                        <select id="motivoMovimentacao" name="motivo" required>
+                            <option value="">Selecione...</option>
+                            <option value="compra">Compra</option>
+                            <option value="venda">Venda</option>
+                            <option value="ajuste">Ajuste de Estoque</option>
+                            <option value="devolucao">Devolução</option>
+                            <option value="perda">Perda</option>
+                            <option value="transferencia">Transferência</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="observacoesMovimentacao">Observações</label>
+                        <textarea id="observacoesMovimentacao" name="observacoes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelMovimentacao">Cancelar</button>
+                <button type="submit" class="btn btn-primary" form="movimentacaoForm" id="saveMovimentacao">Registrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Carregando...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/estoque.js"></script>
+</body>
+</html>

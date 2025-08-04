@@ -2,6 +2,8 @@
 
 namespace ERP\Core;
 
+use ERP\Core\Performance\PerformanceBootstrap;
+
 /**
  * Classe principal da aplicação ERP
  * Gerencia inicialização, roteamento e dependências
@@ -13,12 +15,14 @@ class App
     private $router;
     private $config;
     private $modules = [];
+    private $performanceBootstrap;
     
     private function __construct()
     {
         $this->loadConfig();
         $this->initContainer();
         $this->initRouter();
+        $this->initPerformance();
         $this->loadModules();
     }
     
@@ -75,6 +79,37 @@ class App
     }
     
     /**
+     * Inicializa sistema de performance suprema
+     */
+    private function initPerformance(): void
+    {
+        $this->performanceBootstrap = PerformanceBootstrap::getInstance();
+        
+        // Obter dependências do container
+        $database = $this->container->get('database');
+        $cache = $this->container->get('cache');
+        
+        // Configuração de performance
+        $performanceConfig = [
+            'auto_report' => true,
+            'auto_gc' => true, 
+            'cache_warming' => true,
+            'compression_enabled' => true,
+            'lazy_loading_enabled' => true,
+            'connection_pool_enabled' => true,
+            'database' => $this->config['database']
+        ];
+        
+        // Inicializar performance bootstrap
+        $this->performanceBootstrap->initialize($database, $cache, $performanceConfig);
+        
+        // Registrar no container para acesso global
+        $this->container->singleton('performance', function() {
+            return $this->performanceBootstrap;
+        });
+    }
+    
+    /**
      * Inicializa sistema de roteamento
      */
     private function initRouter(): void
@@ -121,6 +156,19 @@ class App
             
             // Processa a requisição
             $response = $this->router->handle();
+            
+            // Aplicar compressão automática se habilitada
+            if ($this->performanceBootstrap) {
+                $content = $response->getContent();
+                $headers = $response->getHeaders();
+                
+                $compressed = $this->performanceBootstrap->compressResponse($content, $headers);
+                
+                if ($compressed['comprimido']) {
+                    $response->setContent($compressed['conteudo']);
+                    $response->setHeaders($compressed['cabecalhos']);
+                }
+            }
             
             // Envia resposta
             $response->send();
@@ -194,6 +242,40 @@ class App
     public function getModules(): array
     {
         return $this->modules;
+    }
+    
+    /**
+     * Obtém sistema de performance
+     */
+    public function getPerformance(): PerformanceBootstrap
+    {
+        return $this->performanceBootstrap;
+    }
+    
+    /**
+     * Executar benchmark rápido
+     */
+    public function benchmark(): array
+    {
+        return $this->performanceBootstrap ? $this->performanceBootstrap->quickBenchmark() : [];
+    }
+    
+    /**
+     * Analisar performance completa
+     */
+    public function analyzePerformance(): array
+    {
+        return $this->performanceBootstrap ? $this->performanceBootstrap->analyzePerformance() : [];
+    }
+    
+    /**
+     * Auto-otimização
+     */
+    public function optimize(): void
+    {
+        if ($this->performanceBootstrap) {
+            $this->performanceBootstrap->autoOptimize();
+        }
     }
 }
 

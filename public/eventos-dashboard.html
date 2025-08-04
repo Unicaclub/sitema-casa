@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Eventos VIP - Sistema ERP</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="assets/css/supremo-ui.css">
+    <style>
+        .eventos-dashboard {
+            padding: var(--space-6);
+            background: var(--bg-primary);
+            min-height: 100vh;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+            padding: var(--space-6);
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            border-radius: var(--radius-2xl);
+            color: white;
+        }
+        
+        .dashboard-title {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            margin: 0;
+        }
+        
+        .dashboard-subtitle {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            margin: var(--space-2) 0 0 0;
+        }
+        
+        .evento-selector {
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+        }
+        
+        .evento-select {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+        }
+        
+        .evento-select option {
+            background: var(--neutral-800);
+            color: white;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+        }
+        
+        .status-ativo { background: var(--success-50); color: var(--success-700); }
+        .status-encerrado { background: var(--neutral-100); color: var(--neutral-700); }
+        .status-planejamento { background: var(--warning-50); color: var(--warning-700); }
+        
+        .metricas-principais {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .metrica-card {
+            background: var(--bg-primary);
+            padding: var(--space-6);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-neomorphism-light);
+            border: 1px solid var(--border-primary);
+            transition: all var(--duration-normal) var(--ease-out);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metrica-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+        }
+        
+        .metrica-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .metrica-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xl);
+            color: white;
+            margin-bottom: var(--space-4);
+        }
+        
+        .metrica-vendas { background: linear-gradient(135deg, #4ECDC4, #44A08D); }
+        .metrica-faturamento { background: linear-gradient(135deg, #FFD23F, #FF6B35); }
+        .metrica-presencas { background: linear-gradient(135deg, #A8E6CF, #7FCDCD); }
+        .metrica-pdv { background: linear-gradient(135deg, #DDA0DD, #98D8C8); }
+        
+        .metrica-valor {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: var(--space-2);
+        }
+        
+        .metrica-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            font-weight: var(--font-weight-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .metrica-variacao {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: var(--font-size-xs);
+            margin-top: var(--space-2);
+        }
+        
+        .variacao-positiva { color: var(--success-600); }
+        .variacao-negativa { color: var(--error-600); }
+        
+        .graficos-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .grafico-card {
+            background: var(--bg-primary);
+            padding: var(--space-6);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-primary);
+        }
+        
+        .grafico-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .grafico-titulo {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+        }
+        
+        .listas-detalhes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .lista-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            border: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .lista-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        
+        .lista-nome {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+        }
+        
+        .lista-tipo {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            text-transform: uppercase;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--neutral-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin: var(--space-3) 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+            transition: width var(--duration-normal) var(--ease-out);
+        }
+        
+        .lista-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-valor {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--text-primary);
+        }
+        
+        .stat-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .acoes-rapidas {
+            position: fixed;
+            top: var(--space-8);
+            right: var(--space-8);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        
+        .acao-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            color: white;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .acao-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .tempo-real {
+            position: fixed;
+            bottom: var(--space-8);
+            right: var(--space-8);
+            background: var(--success-500);
+            color: white;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            box-shadow: var(--shadow-lg);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-overlay);
+            backdrop-filter: blur(8px);
+        }
+        
+        .loading-content {
+            background: var(--bg-primary);
+            padding: var(--space-8);
+            border-radius: var(--radius-2xl);
+            text-align: center;
+            box-shadow: var(--shadow-2xl);
+        }
+        
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border-primary);
+            border-top: 4px solid var(--primary-500);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-4);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .graficos-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .acoes-rapidas {
+                position: static;
+                flex-direction: row;
+                justify-content: center;
+                margin-top: var(--space-6);
+            }
+            
+            .tempo-real {
+                position: static;
+                margin-top: var(--space-6);
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="eventos-dashboard">
+        <!-- Header do Dashboard -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">
+                    <i class="fas fa-calendar-star"></i>
+                    Dashboard Eventos VIP
+                </h1>
+                <p class="dashboard-subtitle">Controle total em tempo real</p>
+            </div>
+            
+            <div class="evento-selector">
+                <label for="eventoSelect" style="color: white; font-weight: 500;">Evento:</label>
+                <select id="eventoSelect" class="evento-select">
+                    <option value="">Carregando eventos...</option>
+                </select>
+                <div id="statusEvento" class="status-indicator status-ativo">
+                    <i class="fas fa-circle"></i>Ativo
+                </div>
+            </div>
+        </div>
+        
+        <!-- Métricas Principais -->
+        <div class="metricas-principais">
+            <div class="metrica-card">
+                <div class="metrica-icon metrica-vendas">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <div class="metrica-valor" id="totalVendas">0</div>
+                <div class="metrica-label">Total de Vendas</div>
+                <div class="metrica-variacao variacao-positiva">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="variacaoVendas">+0%</span>
+                </div>
+            </div>
+            
+            <div class="metrica-card">
+                <div class="metrica-icon metrica-faturamento">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="metrica-valor" id="faturamentoTotal">R$ 0,00</div>
+                <div class="metrica-label">Faturamento Total</div>
+                <div class="metrica-variacao variacao-positiva">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="variacaoFaturamento">+0%</span>
+                </div>
+            </div>
+            
+            <div class="metrica-card">
+                <div class="metrica-icon metrica-presencas">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="metrica-valor" id="totalPresencas">0</div>
+                <div class="metrica-label">Presenças Confirmadas</div>
+                <div class="metrica-variacao">
+                    <i class="fas fa-percentage"></i>
+                    <span id="taxaPresenca">0%</span> de conversão
+                </div>
+            </div>
+            
+            <div class="metrica-card">
+                <div class="metrica-icon metrica-pdv">
+                    <i class="fas fa-cash-register"></i>
+                </div>
+                <div class="metrica-valor" id="faturamentoPDV">R$ 0,00</div>
+                <div class="metrica-label">Faturamento PDV</div>
+                <div class="metrica-variacao variacao-positiva">
+                    <i class="fas fa-chart-line"></i>
+                    <span id="ticketMedio">R$ 0,00</span> ticket médio
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gráficos -->
+        <div class="graficos-section">
+            <div class="grafico-card">
+                <div class="grafico-header">
+                    <h3 class="grafico-titulo">Vendas por Hora</h3>
+                    <button class="supremo-btn supremo-btn-sm supremo-btn-ghost" onclick="atualizarGraficos()">
+                        <i class="fas fa-sync-alt"></i> Atualizar
+                    </button>
+                </div>
+                <canvas id="vendasPorHoraChart" width="400" height="200"></canvas>
+            </div>
+            
+            <div class="grafico-card">
+                <div class="grafico-header">
+                    <h3 class="grafico-titulo">Top Promoters</h3>
+                </div>
+                <canvas id="topPromotersChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        
+        <!-- Detalhes das Listas -->
+        <div class="listas-detalhes" id="listasDetalhes">
+            <!-- Listas serão carregadas dinamicamente -->
+        </div>
+        
+        <!-- Ações Rápidas -->
+        <div class="acoes-rapidas">
+            <button class="acao-btn" title="Nova Venda" onclick="novaVenda()">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="acao-btn" title="Validar Entrada" onclick="validarEntrada()">
+                <i class="fas fa-door-open"></i>
+            </button>
+            <button class="acao-btn" title="PDV" onclick="abrirPDV()">
+                <i class="fas fa-cash-register"></i>
+            </button>
+            <button class="acao-btn" title="Relatórios" onclick="gerarRelatorio()">
+                <i class="fas fa-chart-bar"></i>
+            </button>
+        </div>
+        
+        <!-- Indicador Tempo Real -->
+        <div class="tempo-real">
+            <i class="fas fa-circle"></i> Ao vivo
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Carregando Dashboard...</h3>
+            <p>Aguarde enquanto sincronizamos os dados</p>
+        </div>
+    </div>
+    
+    <!-- Modal Nova Venda -->
+    <div id="modalNovaVenda" class="supremo-modal-overlay">
+        <div class="supremo-modal">
+            <div class="supremo-modal-header">
+                <h3 class="supremo-modal-title">Nova Venda</h3>
+                <button class="supremo-modal-close">&times;</button>
+            </div>
+            <div class="supremo-modal-body">
+                <form id="formNovaVenda">
+                    <div class="supremo-form-group">
+                        <label class="supremo-label">CPF do Cliente</label>
+                        <input type="text" class="supremo-input" id="cpfCliente" placeholder="000.000.000-00" maxlength="14">
+                    </div>
+                    
+                    <div class="supremo-form-group">
+                        <label class="supremo-label">Lista</label>
+                        <select class="supremo-input supremo-select" id="listaVenda">
+                            <option value="">Selecione uma lista</option>
+                        </select>
+                    </div>
+                    
+                    <div class="supremo-form-group">
+                        <label class="supremo-label">Forma de Pagamento</label>
+                        <select class="supremo-input supremo-select" id="formaPagamento">
+                            <option value="pix">PIX</option>
+                            <option value="cartao_credito">Cartão de Crédito</option>
+                            <option value="cartao_debito">Cartão de Débito</option>
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="gratuito">Gratuito</option>
+                        </select>
+                    </div>
+                    
+                    <div class="supremo-form-group">
+                        <label class="supremo-label">Desconto (%)</label>
+                        <input type="number" class="supremo-input" id="descontoVenda" min="0" max="100" value="0">
+                    </div>
+                </form>
+            </div>
+            <div class="supremo-modal-footer">
+                <button class="supremo-btn supremo-btn-ghost" onclick="fecharModal('modalNovaVenda')">Cancelar</button>
+                <button class="supremo-btn supremo-btn-primary" onclick="processarVenda()">
+                    <i class="fas fa-ticket-alt"></i> Finalizar Venda
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Validar Entrada -->
+    <div id="modalValidarEntrada" class="supremo-modal-overlay">
+        <div class="supremo-modal">
+            <div class="supremo-modal-header">
+                <h3 class="supremo-modal-title">Validar Entrada</h3>
+                <button class="supremo-modal-close">&times;</button>
+            </div>
+            <div class="supremo-modal-body">
+                <form id="formValidarEntrada">
+                    <div class="supremo-form-group">
+                        <label class="supremo-label">CPF do Cliente</label>
+                        <input type="text" class="supremo-input" id="cpfEntrada" placeholder="000.000.000-00" maxlength="14">
+                    </div>
+                    
+                    <div id="resultadoValidacao" style="display: none; margin-top: var(--space-4);"></div>
+                </form>
+            </div>
+            <div class="supremo-modal-footer">
+                <button class="supremo-btn supremo-btn-ghost" onclick="fecharModal('modalValidarEntrada')">Fechar</button>
+                <button class="supremo-btn supremo-btn-primary" onclick="validarEntradaCliente()">
+                    <i class="fas fa-door-open"></i> Validar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="assets/js/api.js"></script>
+    <script>
+        // Variáveis globais
+        let eventoAtual = null;
+        let intervaloBusca = null;
+        let chartVendasHora = null;
+        let chartTopPromoters = null;
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarDashboard();
+            configurarEventListeners();
+        });
+        
+        async function inicializarDashboard() {
+            showLoading();
+            try {
+                await carregarEventos();
+            } catch (error) {
+                console.error('Erro ao inicializar dashboard:', error);
+                showToast('Erro ao carregar dashboard', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function carregarEventos() {
+            try {
+                const response = await api.get('/eventos?status=em_andamento,vendas_abertas');
+                const eventos = response.eventos || [];
+                
+                const select = document.getElementById('eventoSelect');
+                select.innerHTML = '<option value="">Selecione um evento</option>';
+                
+                eventos.forEach(evento => {
+                    const option = document.createElement('option');
+                    option.value = evento.id_evento;
+                    option.textContent = `${evento.nome_evento} - ${formatarData(evento.data_evento)}`;
+                    select.appendChild(option);
+                });
+                
+                // Auto-selecionar primeiro evento se houver
+                if (eventos.length > 0) {
+                    select.value = eventos[0].id_evento;
+                    await selecionarEvento(eventos[0].id_evento);
+                }
+                
+            } catch (error) {
+                console.error('Erro ao carregar eventos:', error);
+                showToast('Erro ao carregar eventos', 'error');
+            }
+        }
+        
+        async function selecionarEvento(idEvento) {
+            if (!idEvento) return;
+            
+            eventoAtual = idEvento;
+            
+            // Parar intervalo anterior
+            if (intervaloBusca) {
+                clearInterval(intervaloBusca);
+            }
+            
+            // Carregar dados do evento
+            await carregarDashboardEvento();
+            
+            // Configurar atualização automática (30 segundos)
+            intervaloBusca = setInterval(carregarDashboardEvento, 30000);
+        }
+        
+        async function carregarDashboardEvento() {
+            if (!eventoAtual) return;
+            
+            try {
+                const response = await api.get(`/eventos/${eventoAtual}/dashboard`);
+                const dashboard = response.dashboard;
+                
+                atualizarMetricas(dashboard.metricas);
+                atualizarGraficoVendasHora(dashboard.vendas_por_hora);
+                atualizarGraficoPromoters(dashboard.vendas_por_promoter);
+                atualizarListasDetalhes(dashboard.vendas_por_lista);
+                
+                // Atualizar timestamp
+                document.querySelector('.tempo-real').innerHTML = 
+                    `<i class="fas fa-circle"></i> Atualizado ${new Date().toLocaleTimeString()}`;
+                
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                showToast('Erro ao atualizar dados', 'error');
+            }
+        }
+        
+        function atualizarMetricas(metricas) {
+            document.getElementById('totalVendas').textContent = metricas.total_vendas || 0;
+            document.getElementById('faturamentoTotal').textContent = formatarMoeda(metricas.faturamento_total || 0);
+            document.getElementById('totalPresencas').textContent = metricas.total_presencas || 0;
+            document.getElementById('faturamentoPDV').textContent = formatarMoeda(metricas.faturamento_pdv || 0);
+            
+            // Calcular taxa de presença
+            const taxaPresenca = metricas.total_vendas > 0 
+                ? ((metricas.total_presencas / metricas.total_vendas) * 100).toFixed(1)
+                : 0;
+            document.getElementById('taxaPresenca').textContent = taxaPresenca;
+            
+            // Calcular ticket médio PDV
+            const ticketMedio = metricas.total_transacoes_pdv > 0
+                ? (metricas.faturamento_pdv / metricas.total_transacoes_pdv)
+                : 0;
+            document.getElementById('ticketMedio').textContent = formatarMoeda(ticketMedio);
+        }
+        
+        function atualizarGraficoVendasHora(dados) {
+            const ctx = document.getElementById('vendasPorHoraChart').getContext('2d');
+            
+            if (chartVendasHora) {
+                chartVendasHora.destroy();
+            }
+            
+            const labels = dados.map(item => `${item.hora}:00`);
+            const vendas = dados.map(item => item.vendas);
+            const faturamento = dados.map(item => item.faturamento);
+            
+            chartVendasHora = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Vendas',
+                        data: vendas,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.4,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Faturamento (R$)',
+                        data: faturamento,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Vendas'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Faturamento (R$)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+        }
+        
+        function atualizarGraficoPromoters(dados) {
+            const ctx = document.getElementById('topPromotersChart').getContext('2d');
+            
+            if (chartTopPromoters) {
+                chartTopPromoters.destroy();
+            }
+            
+            const labels = dados.slice(0, 5).map(item => item.nome_promoter || 'Sem promoter');
+            const valores = dados.slice(0, 5).map(item => item.faturamento_promoter);
+            
+            chartTopPromoters = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: valores,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function atualizarListasDetalhes(listas) {
+            const container = document.getElementById('listasDetalhes');
+            container.innerHTML = '';
+            
+            listas.forEach(lista => {
+                const percentualOcupacao = (lista.total_vendas / lista.capacidade_maxima) * 100;
+                const percentualPresenca = lista.total_vendas > 0 
+                    ? (lista.total_presencas / lista.total_vendas) * 100 
+                    : 0;
+                
+                const listaCard = document.createElement('div');
+                listaCard.className = 'lista-card';
+                listaCard.innerHTML = `
+                    <div class="lista-header">
+                        <div class="lista-nome">${lista.nome_lista}</div>
+                        <div class="lista-tipo" style="background: ${getCorTipoLista(lista.nome_tipo_lista)}">
+                            ${lista.nome_tipo_lista}
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentualOcupacao}%"></div>
+                    </div>
+                    <div style="font-size: var(--font-size-xs); color: var(--text-secondary); margin-bottom: var(--space-4);">
+                        ${lista.total_vendas} / ${lista.capacidade_maxima} ingressos (${percentualOcupacao.toFixed(1)}%)
+                    </div>
+                    
+                    <div class="lista-stats">
+                        <div class="stat-item">
+                            <div class="stat-valor">${formatarMoeda(lista.faturamento_lista || 0)}</div>
+                            <div class="stat-label">Faturamento</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-valor">${lista.total_presencas || 0}</div>
+                            <div class="stat-label">Presenças (${percentualPresenca.toFixed(1)}%)</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(listaCard);
+            });
+        }
+        
+        function getCorTipoLista(tipo) {
+            const cores = {
+                'Lista Promoter': 'rgba(255, 107, 53, 0.2)',
+                'Lista Aniversário': 'rgba(255, 210, 63, 0.2)',
+                'Lista Convidados': 'rgba(6, 255, 165, 0.2)',
+                'Lista Free': 'rgba(78, 205, 196, 0.2)',
+                'Lista Pagante': 'rgba(69, 183, 209, 0.2)',
+                'Lista Desconto': 'rgba(150, 206, 180, 0.2)',
+                'Lista VIP': 'rgba(255, 234, 167, 0.2)',
+                'Lista Mesa': 'rgba(221, 160, 221, 0.2)'
+            };
+            return cores[tipo] || 'rgba(128, 128, 128, 0.2)';
+        }
+        
+        function configurarEventListeners() {
+            // Seletor de evento
+            document.getElementById('eventoSelect').addEventListener('change', function() {
+                selecionarEvento(this.value);
+            });
+            
+            // Modais
+            document.querySelectorAll('.supremo-modal-close').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.supremo-modal-overlay');
+                    fecharModal(modal.id);
+                });
+            });
+            
+            // Formatação de CPF
+            document.getElementById('cpfCliente').addEventListener('input', function() {
+                this.value = formatarCPF(this.value);
+            });
+            
+            document.getElementById('cpfEntrada').addEventListener('input', function() {
+                this.value = formatarCPF(this.value);
+            });
+        }
+        
+        // Funções dos modais
+        function novaVenda() {
+            if (!eventoAtual) {
+                showToast('Selecione um evento primeiro', 'warning');
+                return;
+            }
+            
+            carregarListasEvento();
+            abrirModal('modalNovaVenda');
+        }
+        
+        function validarEntrada() {
+            if (!eventoAtual) {
+                showToast('Selecione um evento primeiro', 'warning');
+                return;
+            }
+            
+            abrirModal('modalValidarEntrada');
+        }
+        
+        async function carregarListasEvento() {
+            try {
+                const response = await api.get(`/eventos/${eventoAtual}`);
+                const listas = response.listas || [];
+                
+                const select = document.getElementById('listaVenda');
+                select.innerHTML = '<option value="">Selecione uma lista</option>';
+                
+                listas.forEach(lista => {
+                    if (lista.status_lista === 'ativa') {
+                        const option = document.createElement('option');
+                        option.value = lista.id_lista;
+                        option.textContent = `${lista.nome_lista} - R$ ${parseFloat(lista.valor_ingresso).toFixed(2)}`;
+                        select.appendChild(option);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar listas:', error);
+                showToast('Erro ao carregar listas', 'error');
+            }
+        }
+        
+        async function processarVenda() {
+            const cpf = document.getElementById('cpfCliente').value.replace(/\D/g, '');
+            const idLista = document.getElementById('listaVenda').value;
+            const formaPagamento = document.getElementById('formaPagamento').value;
+            const desconto = parseFloat(document.getElementById('descontoVenda').value) || 0;
+            
+            if (!cpf || cpf.length !== 11) {
+                showToast('CPF inválido', 'error');
+                return;
+            }
+            
+            if (!idLista) {
+                showToast('Selecione uma lista', 'error');
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                // Primeiro buscar/cadastrar cliente
+                let cliente = await api.get(`/eventos/cliente/${cpf}`);
+                
+                if (!cliente.sucesso) {
+                    // Cliente não existe, precisará cadastrar
+                    const nomeCliente = prompt('Cliente não encontrado. Digite o nome:');
+                    if (!nomeCliente) return;
+                    
+                    const resultadoCadastro = await api.post('/eventos/cliente', {
+                        cpf_cliente: cpf,
+                        nome_cliente: nomeCliente
+                    });
+                    
+                    if (!resultadoCadastro.sucesso) {
+                        throw new Error(resultadoCadastro.erro);
+                    }
+                    
+                    cliente = await api.get(`/eventos/cliente/${cpf}`);
+                }
+                
+                // Processar venda
+                const resultadoVenda = await api.post('/eventos/venda', {
+                    id_evento: eventoAtual,
+                    id_lista: idLista,
+                    id_cliente: cliente.cliente.id_cliente,
+                    forma_pagamento: formaPagamento,
+                    percentual_desconto: desconto
+                });
+                
+                if (resultadoVenda.sucesso) {
+                    showToast('Venda realizada com sucesso!', 'success');
+                    fecharModal('modalNovaVenda');
+                    carregarDashboardEvento(); // Atualizar dashboard
+                    
+                    // Limpar formulário
+                    document.getElementById('formNovaVenda').reset();
+                } else {
+                    throw new Error(resultadoVenda.erro);
+                }
+                
+            } catch (error) {
+                console.error('Erro ao processar venda:', error);
+                showToast('Erro ao processar venda: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function validarEntradaCliente() {
+            const cpf = document.getElementById('cpfEntrada').value.replace(/\D/g, '');
+            
+            if (!cpf || cpf.length !== 11) {
+                showToast('CPF inválido', 'error');
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                const resultado = await api.post(`/eventos/${eventoAtual}/entrada`, {
+                    cpf: cpf
+                });
+                
+                const resultadoDiv = document.getElementById('resultadoValidacao');
+                
+                if (resultado.sucesso) {
+                    resultadoDiv.innerHTML = `
+                        <div class="supremo-status supremo-status-success">
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Entrada Autorizada!</strong>
+                            <p><strong>Cliente:</strong> ${resultado.cliente.nome}</p>
+                            <p><strong>Lista:</strong> ${resultado.cliente.lista}</p>
+                            <p><strong>Tipo:</strong> ${resultado.cliente.tipo_lista}</p>
+                        </div>
+                    `;
+                    
+                    showToast('Entrada autorizada!', 'success');
+                    carregarDashboardEvento(); // Atualizar dashboard
+                } else {
+                    resultadoDiv.innerHTML = `
+                        <div class="supremo-status supremo-status-error">
+                            <i class="fas fa-times-circle"></i>
+                            <strong>Entrada Negada</strong>
+                            <p>${resultado.erro}</p>
+                        </div>
+                    `;
+                }
+                
+                resultadoDiv.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Erro ao validar entrada:', error);
+                showToast('Erro ao validar entrada', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function abrirPDV() {
+            if (!eventoAtual) {
+                showToast('Selecione um evento primeiro', 'warning');
+                return;
+            }
+            
+            // Abrir PDV em nova aba
+            window.open(`pdv.html?evento=${eventoAtual}`, '_blank');
+        }
+        
+        function gerarRelatorio() {
+            if (!eventoAtual) {
+                showToast('Selecione um evento primeiro', 'warning');
+                return;
+            }
+            
+            // Abrir relatórios em nova aba
+            window.open(`relatorios-eventos.html?evento=${eventoAtual}`, '_blank');
+        }
+        
+        function atualizarGraficos() {
+            carregarDashboardEvento();
+            showToast('Dados atualizados!', 'success');
+        }
+        
+        // Funções utilitárias
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+        
+        function formatarData(data) {
+            return new Date(data).toLocaleDateString('pt-BR');
+        }
+        
+        function formatarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        }
+        
+        function abrirModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        function fecharModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        function showToast(message, type = 'info') {
+            // Implementar toast notifications
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
+        
+        // Cleanup ao sair da página
+        window.addEventListener('beforeunload', function() {
+            if (intervaloBusca) {
+                clearInterval(intervaloBusca);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,37 +1,75 @@
 {
     "name": "empresa/erp-sistema",
-    "description": "Sistema ERP Completo com Arquitetura Modular",
+    "description": "Sistema ERP Enterprise - Arquitetura Modular PHP 8+",
     "type": "project",
-    "keywords": ["erp", "business", "management", "php", "modular"],
+    "keywords": ["erp", "enterprise", "business", "management", "php8", "modular", "multi-tenant"],
     "license": "MIT",
     "authors": [
         {
-            "name": "ERP Team",
-            "email": "dev@empresa.com"
+            "name": "ERP Enterprise Team",
+            "email": "dev@empresa.com",
+            "role": "Lead Developer"
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-redis": "*",
-        "vlucas/phpdotenv": "^5.4",
-        "monolog/monolog": "^3.0",
-        "firebase/php-jwt": "^6.0",
-        "phpoffice/phpspreadsheet": "^1.24",
+        "ext-intl": "*",
+        "ext-bcmath": "*",
+        "ext-gd": "*",
+        "ext-zip": "*",
+        "ext-curl": "*",
+        "vlucas/phpdotenv": "^5.5",
+        "monolog/monolog": "^3.4",
+        "firebase/php-jwt": "^6.8",
+        "phpoffice/phpspreadsheet": "^1.29",
         "dompdf/dompdf": "^2.0",
-        "swiftmailer/swiftmailer": "^6.3",
-        "guzzlehttp/guzzle": "^7.4"
+        "symfony/mailer": "^6.3",
+        "symfony/console": "^6.3",
+        "symfony/validator": "^6.3",
+        "symfony/serializer": "^6.3",
+        "symfony/rate-limiter": "^6.3",
+        "symfony/cache": "^6.3",
+        "guzzlehttp/guzzle": "^7.8",
+        "ramsey/uuid": "^4.7",
+        "league/oauth2-server": "^8.5",
+        "nesbot/carbon": "^2.70",
+        "illuminate/database": "^10.20",
+        "illuminate/pagination": "^10.20",
+        "illuminate/validation": "^10.20",
+        "doctrine/dbal": "^3.6",
+        "predis/predis": "^2.2",
+        "league/flysystem": "^3.15",
+        "league/fractal": "^0.20",
+        "spatie/image": "^2.2",
+        "spatie/laravel-permission": "^5.11",
+        "pusher/pusher-php-server": "^7.2",
+        "league/csv": "^9.10",
+        "brick/math": "^0.11"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0",
-        "phpstan/phpstan": "^1.8",
+        "phpunit/phpunit": "^10.3",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-strict-rules": "^1.5",
         "squizlabs/php_codesniffer": "^3.7",
-        "vimeo/psalm": "^4.30"
+        "vimeo/psalm": "^5.15",
+        "friendsofphp/php-cs-fixer": "^3.25",
+        "pestphp/pest": "^2.17",
+        "mockery/mockery": "^1.6",
+        "fakerphp/faker": "^1.23",
+        "rector/rector": "^0.18",
+        "roave/security-advisories": "dev-latest",
+        "phpstan/extension-installer": "^1.3",
+        "nunomaduro/collision": "^7.8"
     },
     "autoload": {
         "psr-4": {
-            "ERP\\": "src/"
+            "ERP\\": "src/",
+            "ERP\\Core\\": "src/Core/",
+            "ERP\\Modules\\": "src/Modules/",
+            "ERP\\Shared\\": "src/Shared/"
         },
         "files": [
             "src/helpers.php"
@@ -39,24 +77,50 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ERP\\Tests\\": "tests/"
+            "ERP\\Tests\\": "tests/",
+            "ERP\\Tests\\Unit\\": "tests/Unit/",
+            "ERP\\Tests\\Feature\\": "tests/Feature/",
+            "ERP\\Tests\\Integration\\": "tests/Integration/"
         }
     },
     "scripts": {
-        "test": "phpunit",
-        "test-coverage": "phpunit --coverage-html coverage",
-        "analyse": "phpstan analyse src",
-        "psalm": "psalm",
-        "cs-check": "phpcs",
-        "cs-fix": "phpcbf",
+        "test": "vendor/bin/phpunit",
+        "test-unit": "vendor/bin/phpunit --testsuite=Unit",
+        "test-feature": "vendor/bin/phpunit --testsuite=Feature",
+        "test-integration": "vendor/bin/phpunit --testsuite=Integration",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage --coverage-clover coverage.xml",
+        "analyse": "vendor/bin/phpstan analyse src tests --level=9",
+        "psalm": "vendor/bin/psalm",
+        "cs-check": "vendor/bin/phpcs",
+        "cs-fix": "vendor/bin/phpcbf",
+        "cs-fix-fixer": "vendor/bin/php-cs-fixer fix",
+        "rector": "vendor/bin/rector process",
+        "rector-dry": "vendor/bin/rector process --dry-run",
         "quality": [
             "@cs-check",
             "@analyse",
+            "@psalm",
             "@test"
         ],
-        "post-autoload-dump": [
-            "@php artisan clear-compiled",
-            "@php artisan optimize"
+        "quality-fix": [
+            "@cs-fix",
+            "@cs-fix-fixer",
+            "@rector"
+        ],
+        "install-dev": [
+            "@composer install",
+            "@quality-fix"
+        ],
+        "build": [
+            "@composer install --no-dev --optimize-autoloader",
+            "@composer dump-autoload --optimize --classmap-authoritative"
+        ],
+        "serve": "php -S localhost:8000 -t public",
+        "migrate": "php artisan migrate",
+        "seed": "php artisan db:seed",
+        "fresh": [
+            "php artisan migrate:fresh",
+            "php artisan db:seed"
         ]
     },
     "config": {
@@ -64,7 +128,17 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "phpstan/extension-installer": true,
+            "pestphp/pest-plugin": true
+        },
+        "platform": {
+            "php": "8.2"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
         }
     },
     "minimum-stability": "stable",

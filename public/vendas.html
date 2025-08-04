@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendas - Sistema ERP</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/dashboard.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fas fa-chart-line"></i>
+                    <span>ERP Sistema</span>
+                </div>
+                <button class="toggle-btn" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-menu">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="crm.html" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>CRM</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="estoque.html" class="nav-link">
+                            <i class="fas fa-boxes"></i>
+                            <span>Estoque</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="vendas.html" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Vendas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="financeiro.html" class="nav-link">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Financeiro</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="relatorios.html" class="nav-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Relatórios</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="configuracoes.html" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 class="page-title">
+                        <i class="fas fa-shopping-cart"></i>
+                        Gestão de Vendas
+                    </h1>
+                    <p class="page-subtitle">Controle completo de vendas e performance</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <span class="user-name" id="userName">Carregando...</span>
+                            <span class="user-email" id="userEmail">Carregando...</span>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="totalVendas">0</span>
+                        <span class="stat-label">Vendas do Mês</span>
+                    </div>
+                </div>
+                <div class="stat-card primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="receitaMes">R$ 0,00</span>
+                        <span class="stat-label">Receita do Mês</span>
+                    </div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="ticketMedio">R$ 0,00</span>
+                        <span class="stat-label">Ticket Médio</span>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-target"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="metaAtingida">0%</span>
+                        <span class="stat-label">Meta Atingida</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="actions-bar">
+                <div class="actions-left">
+                    <button class="btn btn-primary" id="btnNovaVenda">
+                        <i class="fas fa-plus"></i>
+                        Nova Venda
+                    </button>
+                    <button class="btn btn-secondary" id="btnMetas">
+                        <i class="fas fa-target"></i>
+                        Metas
+                    </button>
+                    <button class="btn btn-info" id="btnRelatorio">
+                        <i class="fas fa-file-pdf"></i>
+                        Relatório
+                    </button>
+                </div>
+                <div class="actions-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar vendas..." id="searchInput">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="filtroStatus">
+                            <option value="">Todos Status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="concluida">Concluída</option>
+                            <option value="cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="filtroPeriodo">
+                            <option value="hoje">Hoje</option>
+                            <option value="semana">Esta Semana</option>
+                            <option value="mes" selected>Este Mês</option>
+                            <option value="trimestre">Este Trimestre</option>
+                            <option value="personalizado">Personalizado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Chart -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h3>Performance de Vendas</h3>
+                    <div class="chart-controls">
+                        <button class="btn btn-sm btn-secondary" data-period="7">7 dias</button>
+                        <button class="btn btn-sm btn-secondary active" data-period="30">30 dias</button>
+                        <button class="btn btn-sm btn-secondary" data-period="90">90 dias</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Sales Table -->
+            <div class="content-section">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Lista de Vendas</h3>
+                        <div class="table-actions">
+                            <button class="btn-icon" id="btnRefresh" title="Atualizar">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="btn-icon" id="btnExportar" title="Exportar">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="data-table" id="vendasTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="selectAll">
+                                    </th>
+                                    <th>Nº Venda</th>
+                                    <th>Data</th>
+                                    <th>Cliente</th>
+                                    <th>Vendedor</th>
+                                    <th>Itens</th>
+                                    <th>Valor Total</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vendasTableBody">
+                                <!-- Dados carregados via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-footer">
+                        <div class="table-info">
+                            <span id="tableInfo">Carregando...</span>
+                        </div>
+                        <div class="pagination" id="pagination">
+                            <!-- Paginação gerada via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Products Section -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-trophy text-warning"></i>
+                        Produtos Mais Vendidos
+                    </h3>
+                </div>
+                <div class="top-products-grid" id="topProductsGrid">
+                    <!-- Produtos mais vendidos carregados via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Nova/Editar Venda -->
+    <div class="modal large" id="modalVenda">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nova Venda</h3>
+                <button class="close" id="closeVendaModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="vendaForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cliente">Cliente *</label>
+                            <select id="cliente" name="cliente_id" required>
+                                <option value="">Selecione um cliente...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vendedor">Vendedor</label>
+                            <select id="vendedor" name="vendedor_id">
+                                <option value="">Selecione um vendedor...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataVenda">Data da Venda *</label>
+                            <input type="date" id="dataVenda" name="data_venda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="formaPagamento">Forma de Pagamento</label>
+                            <select id="formaPagamento" name="forma_pagamento">
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="cartao_credito">Cartão de Crédito</option>
+                                <option value="cartao_debito">Cartão de Débito</option>
+                                <option value="pix">PIX</option>
+                                <option value="transferencia">Transferência</option>
+                                <option value="boleto">Boleto</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Itens da Venda -->
+                    <div class="section-divider">
+                        <h4>Itens da Venda</h4>
+                        <button type="button" class="btn btn-sm btn-primary" id="btnAdicionarItem">
+                            <i class="fas fa-plus"></i>
+                            Adicionar Item
+                        </button>
+                    </div>
+                    
+                    <div class="itens-container">
+                        <table class="itens-table" id="itensTable">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Preço Unit.</th>
+                                    <th>Desconto</th>
+                                    <th>Subtotal</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itensTableBody">
+                                <!-- Itens adicionados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="venda-totals">
+                        <div class="totals-grid">
+                            <div class="total-item">
+                                <label>Subtotal:</label>
+                                <span id="subtotalVenda">R$ 0,00</span>
+                            </div>
+                            <div class="total-item">
+                                <label>Desconto:</label>
+                                <input type="text" id="descontoGeral" name="desconto_geral" class="money-input" value="0,00">
+                            </div>
+                            <div class="total-item">
+                                <label>Total:</label>
+                                <span id="totalVenda" class="total-final">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="observacoes">Observações</label>
+                        <textarea id="observacoes" name="observacoes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelVenda">Cancelar</button>
+                <button type="submit" class="btn btn-primary" form="vendaForm" id="saveVenda">Salvar Venda</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Metas -->
+    <div class="modal" id="modalMetas">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Configurar Metas</h3>
+                <button class="close" id="closeMetasModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="metasForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="tipoMeta">Tipo de Meta *</label>
+                            <select id="tipoMeta" name="tipo" required>
+                                <option value="">Selecione...</option>
+                                <option value="vendas">Vendas (quantidade)</option>
+                                <option value="receita">Receita (valor)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="periodoMeta">Período *</label>
+                            <select id="periodoMeta" name="periodo" required>
+                                <option value="">Selecione...</option>
+                                <option value="mensal">Mensal</option>
+                                <option value="trimestral">Trimestral</option>
+                                <option value="anual">Anual</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="valorMeta">Valor da Meta *</label>
+                            <input type="text" id="valorMeta" name="valor" class="money-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="vendedorMeta">Vendedor (opcional)</label>
+                            <select id="vendedorMeta" name="vendedor_id">
+                                <option value="">Geral (todos vendedores)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricaoMeta">Descrição</label>
+                        <textarea id="descricaoMeta" name="descricao" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelMetas">Cancelar</button>
+                <button type="submit" class="btn btn-primary" form="metasForm" id="saveMetas">Salvar Meta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Carregando...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/vendas.js"></script>
+</body>
+</html>

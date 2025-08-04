@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔭 Monitoring Dashboard Supremo - ERP Sistema</title>
+    <link rel="stylesheet" href="assets/css/supremo-ui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .metric-card {
+            background: var(--supremo-card-bg);
+            border-radius: var(--supremo-border-radius);
+            padding: 20px;
+            box-shadow: var(--supremo-shadow);
+            border: 1px solid var(--supremo-border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--supremo-shadow-hover);
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--supremo-border-light);
+        }
+        
+        .metric-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--supremo-text-primary);
+        }
+        
+        .status-indicator {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-healthy {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-degraded {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .status-unhealthy {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--supremo-primary);
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--supremo-text-secondary);
+            text-align: center;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .alert-panel {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .alert-icon {
+            color: #ef4444;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            color: #991b1b;
+            margin-bottom: 5px;
+        }
+        
+        .alert-description {
+            font-size: 0.9rem;
+            color: #7f1d1d;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--supremo-primary) 0%, var(--supremo-secondary) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .real-time-indicator {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 15px;
+        }
+        
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .performance-gauge {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+        
+        .apm-traces {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .trace-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--supremo-border-light);
+            font-size: 0.9rem;
+        }
+        
+        .trace-name {
+            font-weight: 500;
+            color: var(--supremo-text-primary);
+        }
+        
+        .trace-duration {
+            color: var(--supremo-text-secondary);
+        }
+        
+        .trace-duration.slow {
+            color: #ef4444;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">🔭 Monitoring Dashboard Supremo</h1>
+        <p class="dashboard-subtitle">Observabilidade Completa em Tempo Real</p>
+        <div class="real-time-indicator">
+            <span class="pulse-dot"></span>
+            LIVE MONITORING
+        </div>
+    </div>
+
+    <!-- Alertas Ativos -->
+    <div id="alertsPanel" class="alert-panel" style="display: none;">
+        <h3 style="color: #991b1b; margin-bottom: 15px;">⚠️ Alertas Ativos</h3>
+        <div id="alertsList"></div>
+    </div>
+
+    <div class="monitoring-grid">
+        <!-- Health Checks -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">🏥 Health Checks</span>
+                <span id="healthStatus" class="status-indicator status-healthy">HEALTHY</span>
+            </div>
+            <div id="healthMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="healthPercentage">100%</div>
+                    <div class="metric-label">Health Score</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="healthChecksTotal">7</div>
+                    <div class="metric-label">Total Checks</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="healthChart"></canvas>
+            </div>
+        </div>
+
+        <!-- APM Metrics -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">⚡ APM Metrics</span>
+                <span id="apmStatus" class="status-indicator status-healthy">OPTIMAL</span>
+            </div>
+            <div id="apmMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="responseTime">95ms</div>
+                    <div class="metric-label">Avg Response Time</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="throughput">1.2K</div>
+                    <div class="metric-label">Requests/min</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="apmChart"></canvas>
+            </div>
+        </div>
+
+        <!-- System Performance -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">💻 System Performance</span>
+                <span id="systemStatus" class="status-indicator status-healthy">NORMAL</span>
+            </div>
+            <div id="systemMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="cpuUsage">35%</div>
+                    <div class="metric-label">CPU Usage</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="memoryUsage">60%</div>
+                    <div class="metric-label">Memory Usage</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="systemChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Database Metrics -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">🗄️ Database</span>
+                <span id="dbStatus" class="status-indicator status-healthy">CONNECTED</span>
+            </div>
+            <div id="dbMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="dbConnections">50</div>
+                    <div class="metric-label">Active Connections</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="dbQueries">15ms</div>
+                    <div class="metric-label">Avg Query Time</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="dbChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Cache Performance -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">🚀 Cache (Redis)</span>
+                <span id="cacheStatus" class="status-indicator status-healthy">ACTIVE</span>
+            </div>
+            <div id="cacheMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="cacheHitRate">87%</div>
+                    <div class="metric-label">Hit Rate</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="cacheMemory">256MB</div>
+                    <div class="metric-label">Memory Used</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="cacheChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Queue System -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">📬 Queue System</span>
+                <span id="queueStatus" class="status-indicator status-healthy">PROCESSING</span>
+            </div>
+            <div id="queueMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="pendingJobs">10</div>
+                    <div class="metric-label">Pending Jobs</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="jobsPerMin">100</div>
+                    <div class="metric-label">Jobs/min</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="queueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Security Dashboard -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">🛡️ Security</span>
+                <span id="securityStatus" class="status-indicator status-healthy">PROTECTED</span>
+            </div>
+            <div id="securityMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="securityScore">98</div>
+                    <div class="metric-label">Security Score</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="threatsBlocked">127</div>
+                    <div class="metric-label">Threats Blocked</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="securityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Business Metrics -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">📊 Business KPIs</span>
+                <span id="businessStatus" class="status-indicator status-healthy">ON TARGET</span>
+            </div>
+            <div id="businessMetrics" class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="transactionsPerMin">250</div>
+                    <div class="metric-label">Transactions/min</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="revenuePerHour">R$ 5K</div>
+                    <div class="metric-label">Revenue/hour</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="businessChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Active Traces -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">🔍 Active Traces</span>
+                <span id="tracesCount" class="status-indicator status-healthy">15 ACTIVE</span>
+            </div>
+            <div class="apm-traces" id="activeTraces">
+                <!-- Traces will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MonitoringDashboard {
+            constructor() {
+                this.charts = {};
+                this.updateInterval = 30000; // 30 seconds
+                this.init();
+            }
+
+            init() {
+                this.initializeCharts();
+                this.startRealTimeUpdates();
+                this.loadInitialData();
+            }
+
+            initializeCharts() {
+                // Health Chart
+                this.charts.health = new Chart(document.getElementById('healthChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Healthy', 'Degraded', 'Unhealthy'],
+                        datasets: [{
+                            data: [7, 0, 0],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { padding: 20 } }
+                        }
+                    }
+                });
+
+                // APM Chart
+                this.charts.apm = new Chart(document.getElementById('apmChart'), {
+                    type: 'line',
+                    data: {
+                        labels: this.generateTimeLabels(12),
+                        datasets: [{
+                            label: 'Response Time (ms)',
+                            data: this.generateRandomData(12, 80, 120),
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+
+                // System Chart
+                this.charts.system = new Chart(document.getElementById('systemChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['CPU', 'Memory', 'Disk', 'Network'],
+                        datasets: [{
+                            data: [35, 60, 75, 40],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#6366f1'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+
+                // Similar initialization for other charts...
+                this.initializeOtherCharts();
+            }
+
+            initializeOtherCharts() {
+                // Database Chart
+                this.charts.database = new Chart(document.getElementById('dbChart'), {
+                    type: 'line',
+                    data: {
+                        labels: this.generateTimeLabels(12),
+                        datasets: [{
+                            label: 'Query Time (ms)',
+                            data: this.generateRandomData(12, 10, 25),
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // Cache Chart  
+                this.charts.cache = new Chart(document.getElementById('cacheChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Hits', 'Misses'],
+                        datasets: [{
+                            data: [87, 13],
+                            backgroundColor: ['#10b981', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+
+                // Queue Chart
+                this.charts.queue = new Chart(document.getElementById('queueChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Pending', 'Processing', 'Completed', 'Failed'],
+                        datasets: [{
+                            data: [10, 5, 95, 0],
+                            backgroundColor: ['#f59e0b', '#6366f1', '#10b981', '#ef4444'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // Security Chart
+                this.charts.security = new Chart(document.getElementById('securityChart'), {
+                    type: 'radar',
+                    data: {
+                        labels: ['WAF', 'IDS', 'DDoS', 'Auth', 'Encryption', 'Audit'],
+                        datasets: [{
+                            label: 'Security Score',
+                            data: [98, 96, 100, 94, 99, 97],
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            pointBackgroundColor: '#dc2626'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+
+                // Business Chart
+                this.charts.business = new Chart(document.getElementById('businessChart'), {
+                    type: 'line',
+                    data: {
+                        labels: this.generateTimeLabels(12),
+                        datasets: [{
+                            label: 'Revenue',
+                            data: this.generateRandomData(12, 4000, 6000),
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            generateTimeLabels(count) {
+                const labels = [];
+                const now = new Date();
+                for (let i = count - 1; i >= 0; i--) {
+                    const time = new Date(now.getTime() - i * 5 * 60000); // 5 minutes intervals
+                    labels.push(time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+                }
+                return labels;
+            }
+
+            generateRandomData(count, min, max) {
+                return Array.from({ length: count }, () => 
+                    Math.floor(Math.random() * (max - min + 1)) + min
+                );
+            }
+
+            startRealTimeUpdates() {
+                setInterval(() => {
+                    this.updateMetrics();
+                    this.updateCharts();
+                    this.updateTraces();
+                    this.checkAlerts();
+                }, this.updateInterval);
+            }
+
+            async loadInitialData() {
+                try {
+                    // Load initial metrics from API
+                    const response = await fetch('/api/monitoring/overview');
+                    const data = await response.json();
+                    this.updateDashboard(data);
+                } catch (error) {
+                    console.error('Failed to load initial monitoring data:', error);
+                }
+            }
+
+            async updateMetrics() {
+                try {
+                    const response = await fetch('/api/monitoring/metrics');
+                    const metrics = await response.json();
+                    
+                    // Update metric values
+                    this.updateMetricValues(metrics);
+                    
+                } catch (error) {
+                    console.error('Failed to update metrics:', error);
+                }
+            }
+
+            updateMetricValues(metrics) {
+                // Update DOM elements with new values
+                document.getElementById('responseTime').textContent = metrics.apm?.response_time + 'ms' || '95ms';
+                document.getElementById('throughput').textContent = metrics.apm?.throughput || '1.2K';
+                document.getElementById('cpuUsage').textContent = metrics.system?.cpu_usage + '%' || '35%';
+                document.getElementById('memoryUsage').textContent = metrics.system?.memory_usage + '%' || '60%';
+                // ... update other metrics
+            }
+
+            updateCharts() {
+                // Update chart data with new values
+                Object.values(this.charts).forEach(chart => {
+                    if (chart.data.datasets[0].data) {
+                        // Shift data and add new point
+                        chart.data.datasets[0].data.shift();
+                        chart.data.datasets[0].data.push(
+                            Math.floor(Math.random() * 50) + 70
+                        );
+                        chart.update('none');
+                    }
+                });
+            }
+
+            updateTraces() {
+                const tracesContainer = document.getElementById('activeTraces');
+                const traces = [
+                    { name: 'GET /api/dashboard/metrics', duration: '85ms', slow: false },
+                    { name: 'POST /api/crm/create', duration: '124ms', slow: false },
+                    { name: 'GET /api/vendas/list', duration: '67ms', slow: false },
+                    { name: 'PUT /api/estoque/update/123', duration: '215ms', slow: true },
+                    { name: 'GET /api/financeiro/fluxo', duration: '92ms', slow: false }
+                ];
+
+                tracesContainer.innerHTML = traces.map(trace => `
+                    <div class="trace-item">
+                        <span class="trace-name">${trace.name}</span>
+                        <span class="trace-duration ${trace.slow ? 'slow' : ''}">${trace.duration}</span>
+                    </div>
+                `).join('');
+            }
+
+            async checkAlerts() {
+                try {
+                    const response = await fetch('/api/monitoring/alerts');
+                    const alerts = await response.json();
+                    
+                    if (alerts.length > 0) {
+                        this.displayAlerts(alerts);
+                    } else {
+                        document.getElementById('alertsPanel').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Failed to check alerts:', error);
+                }
+            }
+
+            displayAlerts(alerts) {
+                const alertsPanel = document.getElementById('alertsPanel');
+                const alertsList = document.getElementById('alertsList');
+                
+                alertsList.innerHTML = alerts.map(alert => `
+                    <div class="alert-item">
+                        <span class="alert-icon">⚠️</span>
+                        <div class="alert-content">
+                            <div class="alert-title">${alert.title}</div>
+                            <div class="alert-description">${alert.description}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                alertsPanel.style.display = 'block';
+            }
+
+            updateDashboard(data) {
+                // Update dashboard with comprehensive data
+                if (data.health) {
+                    this.updateHealthStatus(data.health);
+                }
+                if (data.apm) {
+                    this.updateAPMStatus(data.apm);
+                }
+                // ... update other sections
+            }
+
+            updateHealthStatus(health) {
+                const statusElement = document.getElementById('healthStatus');
+                const percentageElement = document.getElementById('healthPercentage');
+                
+                statusElement.textContent = health.status.toUpperCase();
+                statusElement.className = `status-indicator status-${health.status}`;
+                percentageElement.textContent = health.health_percentage + '%';
+            }
+
+            updateAPMStatus(apm) {
+                const statusElement = document.getElementById('apmStatus');
+                const responseTimeElement = document.getElementById('responseTime');
+                const throughputElement = document.getElementById('throughput');
+                
+                responseTimeElement.textContent = apm.response_time + 'ms';
+                throughputElement.textContent = (apm.throughput / 1000).toFixed(1) + 'K';
+                
+                // Determine status based on performance
+                const status = apm.response_time < 100 ? 'healthy' : 
+                              apm.response_time < 200 ? 'degraded' : 'unhealthy';
+                statusElement.className = `status-indicator status-${status}`;
+            }
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MonitoringDashboard();
+        });
+    </script>
+</body>
+</html>

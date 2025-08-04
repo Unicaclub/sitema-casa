@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema ERP</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="logo-text">ERP Sistema</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+                <a href="crm.html" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span class="menu-text">CRM</span>
+                </a>
+                <a href="stock.html" class="menu-item">
+                    <i class="fas fa-boxes"></i>
+                    <span class="menu-text">Estoque</span>
+                </a>
+                <a href="pos.html" class="menu-item">
+                    <i class="fas fa-cash-register"></i>
+                    <span class="menu-text">PDV</span>
+                </a>
+                <a href="financial.html" class="menu-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <span class="menu-text">Financeiro</span>
+                </a>
+                <a href="reports.html" class="menu-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="menu-text">Relatórios</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="menu-text">Configurações</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Carregando...</div>
+                        <div class="user-email" id="userEmail">carregando@email.com</div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="menu-text">Sair</span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                    <p class="header-subtitle">Visão geral do seu negócio</p>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="btn btn-outline" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i>
+                            Atualizar
+                        </button>
+                        <div class="period-selector">
+                            <select id="periodSelect" onchange="changePeriod()">
+                                <option value="7">Últimos 7 dias</option>
+                                <option value="30" selected>Últimos 30 dias</option>
+                                <option value="90">Últimos 90 dias</option>
+                                <option value="365">Último ano</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Carregando dados...</p>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Alerts -->
+                <div class="alerts-section" id="alertsSection" style="display: none;">
+                    <div class="alerts-container" id="alertsContainer">
+                        <!-- Alertas serão inseridos aqui -->
+                    </div>
+                </div>
+                
+                <!-- Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card sales-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalSales">0</div>
+                            <div class="metric-label">Total de Vendas</div>
+                            <div class="metric-change positive" id="salesChange">+0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card revenue-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalRevenue">R$ 0,00</div>
+                            <div class="metric-label">Faturamento</div>
+                            <div class="metric-change positive" id="revenueChange">+0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card clients-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalClients">0</div>
+                            <div class="metric-label">Clientes</div>
+                            <div class="metric-change positive" id="clientsChange">+0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card balance-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="balance">R$ 0,00</div>
+                            <div class="metric-label">Saldo</div>
+                            <div class="metric-change positive" id="balanceChange">+0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Vendas por Período</h3>
+                            <div class="chart-controls">
+                                <select id="chartType" onchange="updateSalesChart()">
+                                    <option value="daily">Diário</option>
+                                    <option value="weekly">Semanal</option>
+                                    <option value="monthly" selected>Mensal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Resumo Financeiro</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="financialChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Tables -->
+                <div class="tables-grid">
+                    <div class="table-card">
+                        <div class="card-header">
+                            <h3>Top Produtos</h3>
+                            <a href="stock.html" class="btn btn-sm btn-outline">Ver todos</a>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="topProductsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Produto</th>
+                                        <th>Vendidos</th>
+                                        <th>Receita</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="loading-row">
+                                        <td colspan="3">
+                                            <div class="table-loading">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                Carregando produtos...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="table-card">
+                        <div class="card-header">
+                            <h3>Atividades Recentes</h3>
+                            <a href="reports.html" class="btn btn-sm btn-outline">Ver relatório</a>
+                        </div>
+                        <div class="activities-container" id="activitiesContainer">
+                            <div class="activity-loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Carregando atividades...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/ui.js"></script>
+</body>
+</html>

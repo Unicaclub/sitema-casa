@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema ERP</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .login-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .login-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .login-form {
+            padding: 40px 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            padding-left: 50px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 43px;
+            color: #667eea;
+            font-size: 16px;
+        }
+        
+        .form-group.two-factor {
+            display: none;
+        }
+        
+        .form-group.two-factor.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 25px;
+        }
+        
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: #5a67d8;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .btn-login .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        .btn-login.loading .spinner {
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert.error {
+            background: #fee;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+        }
+        
+        .alert.success {
+            background: #f0fff4;
+            color: #276749;
+            border: 1px solid #9ae6b4;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .footer-links {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 10px;
+            }
+            
+            .login-header,
+            .login-form {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1><i class="fas fa-chart-line"></i> Sistema ERP</h1>
+            <p>Faça login para acessar o sistema</p>
+        </div>
+        
+        <form class="login-form" id="loginForm">
+            <div class="alert" id="alert"></div>
+            
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required autocomplete="username">
+                <i class="fas fa-envelope input-icon"></i>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+            
+            <div class="form-group two-factor" id="twoFactorGroup">
+                <label for="twoFactorCode">Código 2FA</label>
+                <input type="text" id="twoFactorCode" name="twoFactorCode" maxlength="6" pattern="[0-9]{6}">
+                <i class="fas fa-shield-alt input-icon"></i>
+            </div>
+            
+            <div class="forgot-password">
+                <a href="#" onclick="showForgotPassword()">Esqueceu a senha?</a>
+            </div>
+            
+            <button type="submit" class="btn-login" id="loginBtn">
+                <span class="spinner"></span>
+                <span class="btn-text">Entrar</span>
+            </button>
+        </form>
+        
+        <div class="footer-links">
+            <a href="#" onclick="showHelp()">Ajuda</a>
+            <a href="#" onclick="showContact()">Contato</a>
+            <a href="#" onclick="showPrivacy()">Privacidade</a>
+        </div>
+    </div>
+    
+    <script src="assets/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const alertDiv = document.getElementById('alert');
+            const twoFactorGroup = document.getElementById('twoFactorGroup');
+            let requiresTwoFactor = false;
+            
+            // Se já está logado, redirecionar
+            if (api.isAuthenticated()) {
+                window.location.href = '/dashboard.html';
+                return;
+            }
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const twoFactorCode = document.getElementById('twoFactorCode').value;
+                
+                if (!email || !password) {
+                    showAlert('Por favor, preencha todos os campos obrigatórios.', 'error');
+                    return;
+                }
+                
+                if (requiresTwoFactor && !twoFactorCode) {
+                    showAlert('Por favor, digite o código 2FA.', 'error');
+                    return;
+                }
+                
+                setLoading(true);
+                hideAlert();
+                
+                try {
+                    const response = await api.login(email, password, twoFactorCode);
+                    
+                    showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                    
+                    // Redirecionar após 1 segundo
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 1000);
+                    
+                } catch (error) {
+                    setLoading(false);
+                    
+                    if (error.status === 422 && error.details.error?.code === 'TWO_FACTOR_REQUIRED') {
+                        requiresTwoFactor = true;
+                        twoFactorGroup.classList.add('show');
+                        showAlert('Digite o código de autenticação de dois fatores.', 'error');
+                        document.getElementById('twoFactorCode').focus();
+                    } else if (error.status === 401) {
+                        showAlert('E-mail ou senha incorretos.', 'error');
+                    } else if (error.status === 429) {
+                        showAlert('Muitas tentativas de login. Tente novamente em alguns minutos.', 'error');
+                    } else if (error.isNetworkError()) {
+                        showAlert('Erro de conexão. Verifique sua internet e tente novamente.', 'error');
+                    } else {
+                        showAlert(error.message || 'Erro interno. Tente novamente.', 'error');
+                    }
+                }
+            });
+            
+            // Auto-foco no campo de 2FA quando aparecer
+            const twoFactorInput = document.getElementById('twoFactorCode');
+            twoFactorInput.addEventListener('input', function(e) {
+                // Permitir apenas números
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                
+                // Auto-submit quando digitar 6 dígitos
+                if (e.target.value.length === 6) {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            });
+            
+            function setLoading(loading) {
+                loginBtn.disabled = loading;
+                loginBtn.classList.toggle('loading', loading);
+                
+                if (loading) {
+                    loginBtn.querySelector('.btn-text').textContent = 'Entrando...';
+                } else {
+                    loginBtn.querySelector('.btn-text').textContent = 'Entrar';
+                }
+            }
+            
+            function showAlert(message, type) {
+                alertDiv.textContent = message;
+                alertDiv.className = `alert ${type} show`;
+            }
+            
+            function hideAlert() {
+                alertDiv.classList.remove('show');
+            }
+        });
+        
+        function showForgotPassword() {
+            alert('Funcionalidade de recuperação de senha será implementada em breve.');
+        }
+        
+        function showHelp() {
+            alert('Entre em contato com o suporte técnico para ajuda: suporte@empresa.com');
+        }
+        
+        function showContact() {
+            alert('Contato: suporte@empresa.com\nTelefone: (11) 3333-3333');
+        }
+        
+        function showPrivacy() {
+            alert('Política de privacidade disponível em: https://empresa.com/privacidade');
+        }
+    </script>
+</body>
+</html>

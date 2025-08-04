@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Security Dashboard - Central de Segurança Enterprise</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="assets/css/security-dashboard.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem 2rem;
+            border-bottom: 2px solid #00ff88;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .header .status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00ff88;
+        }
+
+        .metric-label {
+            color: #b0b0b0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .alert {
+            background: rgba(255, 59, 48, 0.2);
+            border: 1px solid #ff3b30;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            animation: alertPulse 2s infinite;
+        }
+
+        .alert.warning {
+            background: rgba(255, 149, 0, 0.2);
+            border-color: #ff9500;
+        }
+
+        .alert.info {
+            background: rgba(0, 122, 255, 0.2);
+            border-color: #007aff;
+        }
+
+        @keyframes alertPulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .threat-level {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .threat-low {
+            background: rgba(52, 199, 89, 0.3);
+            color: #34c759;
+            border: 1px solid #34c759;
+        }
+
+        .threat-medium {
+            background: rgba(255, 149, 0, 0.3);
+            color: #ff9500;
+            border: 1px solid #ff9500;
+        }
+
+        .threat-high {
+            background: rgba(255, 59, 48, 0.3);
+            color: #ff3b30;
+            border: 1px solid #ff3b30;
+        }
+
+        .threat-critical {
+            background: rgba(175, 82, 222, 0.3);
+            color: #af52de;
+            border: 1px solid #af52de;
+            animation: critical 1s infinite;
+        }
+
+        @keyframes critical {
+            0% { box-shadow: 0 0 0 0 rgba(175, 82, 222, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(175, 82, 222, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(175, 82, 222, 0); }
+        }
+
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .system-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .system-online {
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .system-warning {
+            border-color: #ff9500;
+            box-shadow: 0 0 10px rgba(255, 149, 0, 0.3);
+        }
+
+        .system-offline {
+            border-color: #ff3b30;
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.3);
+        }
+
+        .incident-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .incident-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .incident-high {
+            border-left-color: #ff9500;
+        }
+
+        .incident-critical {
+            border-left-color: #ff3b30;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #b0b0b0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ff88;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ ERP Security Command Center</h1>
+        <div class="status">
+            <div class="status-indicator"></div>
+            <span>Sistema Operacional</span>
+            <button class="refresh-btn" onclick="refreshDashboard()">
+                <span id="refresh-text">Atualizar</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Linha 1: Status Geral -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎯 Status de Segurança</div>
+                    <div class="card-icon">🛡️</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Postura de Segurança</span>
+                    <span class="metric-value" id="security-posture">Excelente</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Score de Segurança</span>
+                    <span class="metric-value" id="security-score">96/100</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Nível de Ameaça</span>
+                    <span class="threat-level threat-medium" id="threat-level">Médio</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⚡ SOC - Centro de Operações</div>
+                    <div class="card-icon">👁️</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Incidentes Hoje</span>
+                    <span class="metric-value" id="incidents-today">12</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">MTTR (Tempo Resposta)</span>
+                    <span class="metric-value" id="mttr">8 min</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Taxa de Automação</span>
+                    <span class="metric-value" id="automation-rate">87%</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🤖 AI & Machine Learning</div>
+                    <div class="card-icon">🧠</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Precisão de Predição</span>
+                    <span class="metric-value" id="ai-accuracy">94.2%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Anomalias Detectadas</span>
+                    <span class="metric-value" id="anomalies">7</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Modelos Ativos</span>
+                    <span class="metric-value" id="active-models">5</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔒 Zero Trust</div>
+                    <div class="card-icon">🎯</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Trust Score Médio</span>
+                    <span class="metric-value" id="trust-score">82</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Verificações Hoje</span>
+                    <span class="metric-value" id="verifications">1,247</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Acessos Negados</span>
+                    <span class="metric-value" id="denied-access">34</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 2: Sistemas de Proteção -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🛡️ WAF - Web Application Firewall</div>
+                    <div class="card-icon">🔥</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Requisições Bloqueadas</span>
+                    <span class="metric-value" id="waf-blocked">1,543</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Taxa de Bloqueio</span>
+                    <span class="metric-value" id="waf-block-rate">5.2%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">IPs Quarentenados</span>
+                    <span class="metric-value" id="waf-quarantine">23</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">👁️ IDS - Detecção de Intrusão</div>
+                    <div class="card-icon">🔍</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Eventos Analisados/s</span>
+                    <span class="metric-value" id="ids-events">189</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Ameaças Detectadas</span>
+                    <span class="metric-value" id="ids-threats">15</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Precisão de Detecção</span>
+                    <span class="metric-value" id="ids-accuracy">96.8%</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎯 Threat Intelligence</div>
+                    <div class="card-icon">📡</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">IoCs Coletados</span>
+                    <span class="metric-value" id="ti-iocs">2,847</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Feeds Ativos</span>
+                    <span class="metric-value" id="ti-feeds">5</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Campanhas Rastreadas</span>
+                    <span class="metric-value" id="ti-campaigns">12</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔧 Pen Testing</div>
+                    <div class="card-icon">⚔️</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Último Scan</span>
+                    <span class="metric-value" id="pentest-last">2h atrás</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Vulnerabilidades</span>
+                    <span class="metric-value" id="pentest-vulns">3</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Score de Segurança</span>
+                    <span class="metric-value" id="pentest-score">A-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 3: Gráficos e Análises -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📊 Threat Landscape - 24h</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="threatChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⚡ Performance de Resposta</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="responseChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎯 Zero Trust Score Distribution</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="trustChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🔍 AI Prediction Accuracy</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="aiChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 4: Status dos Sistemas e Alertas -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⚙️ Status dos Sistemas</div>
+                </div>
+                <div class="system-status">
+                    <div class="system-item system-online">
+                        <div>WAF</div>
+                        <div style="color: #00ff88; font-weight: bold;">Online</div>
+                    </div>
+                    <div class="system-item system-online">
+                        <div>IDS/IPS</div>
+                        <div style="color: #00ff88; font-weight: bold;">Online</div>
+                    </div>
+                    <div class="system-item system-online">
+                        <div>AI Monitor</div>
+                        <div style="color: #00ff88; font-weight: bold;">Online</div>
+                    </div>
+                    <div class="system-item system-online">
+                        <div>Threat Intel</div>
+                        <div style="color: #00ff88; font-weight: bold;">Online</div>
+                    </div>
+                    <div class="system-item system-online">
+                        <div>Zero Trust</div>
+                        <div style="color: #00ff88; font-weight: bold;">Online</div>
+                    </div>
+                    <div class="system-item system-warning">
+                        <div>Backup</div>
+                        <div style="color: #ff9500; font-weight: bold;">Warning</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🚨 Alertas Ativos</div>
+                </div>
+                <div class="incident-list">
+                    <div class="alert warning">
+                        <strong>⚠️ Tentativa de Força Bruta</strong><br>
+                        IP 192.168.1.100 bloqueado após 5 tentativas de login
+                    </div>
+                    <div class="alert info">
+                        <strong>ℹ️ Anomalia Comportamental</strong><br>
+                        Usuário admin_user com padrão de acesso incomum
+                    </div>
+                    <div class="alert">
+                        <strong>🔴 Threat Intelligence Match</strong><br>
+                        IoC detectado: malicious.example.com
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📈 Métricas de Performance</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">MTTD (Mean Time to Detect)</span>
+                    <span class="metric-value">3.2 min</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">MTTR (Mean Time to Respond)</span>
+                    <span class="metric-value">8.5 min</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">False Positive Rate</span>
+                    <span class="metric-value">2.1%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Compliance Score</span>
+                    <span class="metric-value">96.8%</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🌍 Geographic Threats</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">🇨🇳 China</span>
+                    <span class="metric-value">35%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">🇷🇺 Russia</span>
+                    <span class="metric-value">25%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">🇺🇸 USA</span>
+                    <span class="metric-value">20%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">🌍 Others</span>
+                    <span class="metric-value">20%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🛡️ ERP Security Dashboard - Powered by Advanced AI & Zero Trust Architecture</p>
+        <p>Sistema de Segurança Enterprise - Proteção 24/7/365</p>
+    </div>
+
+    <script src="assets/js/security-dashboard.js"></script>
+</body>
+</html>
