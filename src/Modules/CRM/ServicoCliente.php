@@ -7,6 +7,8 @@ namespace ERP\Modules\CRM;
 use ERP\Core\Database\DatabaseManager;
 use ERP\Core\Cache\CacheInterface;
 use ERP\Core\Excecoes\ExcecaoValidacao;
+use Core\MultiTenant\TenantManager;
+use Core\Logger;
 
 /**
  * Serviço de Gestão de Clientes
@@ -19,14 +21,22 @@ final class ServicoCliente
 {
     public function __construct(
         private DatabaseManager $database,
-        private CacheInterface $cache
+        private CacheInterface $cache,
+        private TenantManager $tenantManager,
+        private Logger $logger
     ) {}
     
     /**
      * Criar novo cliente
      */
-    public function criarCliente(array $dados, string $tenantId): array
+    public function criarCliente(array $dados, ?int $tenantId = null): array
     {
+        $tenantId = $tenantId ?? $this->tenantManager->getCurrentTenantId();
+        
+        if (!$tenantId) {
+            throw new ExcecaoValidacao('Tenant não definido');
+        }
+        
         // Validar dados obrigatórios
         $this->validarDadosCliente($dados);
         
@@ -34,6 +44,8 @@ final class ServicoCliente
         if ($this->clienteExiste($dados['email'], $tenantId)) {
             throw new ExcecaoValidacao('Cliente com este email já existe');
         }
+        
+        $this->logger->info('Creating client', ['tenant_id' => $tenantId, 'email' => $dados['email']]);
         
         $dadosCliente = [
             'tenant_id' => $tenantId,

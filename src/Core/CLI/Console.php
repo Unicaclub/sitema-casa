@@ -28,7 +28,14 @@ class Console
             'schedule:run' => ScheduleRunCommand::class,
             'backup:create' => BackupCreateCommand::class,
             'user:create' => UserCreateCommand::class,
-            'serve' => ServeCommand::class
+            'serve' => ServeCommand::class,
+            'tenant:create' => 'TenantCommands@create',
+            'tenant:list' => 'TenantCommands@listTenants',
+            'tenant:stats' => 'TenantCommands@stats',
+            'tenant:validate-isolation' => 'TenantCommands@validateIsolation',
+            'tenant:cache-clear' => 'TenantCommands@cacheClear',
+            'tenant:security-report' => 'TenantCommands@securityReport',
+            'tenant:monitor' => 'TenantCommands@monitor'
         ];
     }
     
