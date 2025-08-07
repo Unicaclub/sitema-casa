@@ -57,23 +57,23 @@ class App
         $this->container = new Container();
         
         // Registro de serviços core
-        $this->container->bind('database', function() {
+        $this->container->bind('database', function () {
             return new Database($this->config['database']);
         });
         
-        $this->container->bind('auth', function() {
+        $this->container->bind('auth', function () {
             return new Auth($this->config['auth']);
         });
         
-        $this->container->bind('cache', function() {
+        $this->container->bind('cache', function () {
             return new Cache($this->config['cache']);
         });
         
-        $this->container->bind('logger', function() {
+        $this->container->bind('logger', function () {
             return new Logger();
         });
         
-        $this->container->bind('eventBus', function() {
+        $this->container->bind('eventBus', function () {
             return new EventBus();
         });
     }
@@ -104,7 +104,7 @@ class App
         $this->performanceBootstrap->initialize($database, $cache, $performanceConfig);
         
         // Registrar no container para acesso global
-        $this->container->singleton('performance', function() {
+        $this->container->singleton('performance', function () {
             return $this->performanceBootstrap;
         });
     }
@@ -219,7 +219,7 @@ class App
         $value = $this->config;
         
         foreach ($keys as $k) {
-            if (!isset($value[$k])) {
+            if (! isset($value[$k])) {
                 return null;
             }
             $value = $value[$k];
@@ -294,8 +294,8 @@ class Container
     
     public function singleton(string $key, \Closure $factory): void
     {
-        $this->bind($key, function() use ($key, $factory) {
-            if (!isset($this->instances[$key])) {
+        $this->bind($key, function () use ($key, $factory) {
+            if (! isset($this->instances[$key])) {
                 $this->instances[$key] = $factory();
             }
             return $this->instances[$key];
@@ -304,7 +304,7 @@ class Container
     
     public function get(string $key)
     {
-        if (!isset($this->bindings[$key])) {
+        if (! isset($this->bindings[$key])) {
             throw new \Exception("Service {$key} not found in container");
         }
         

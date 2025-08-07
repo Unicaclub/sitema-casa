@@ -45,17 +45,17 @@ final class CanalEmail implements CanalInterface
     public function enviar(Notificacao $notificacao): bool
     {
         try {
-            if (!$this->suporta($notificacao->obterTipo())) {
+            if (! $this->suporta($notificacao->obterTipo())) {
                 return false;
             }
             
-            if (!class_exists('\\PHPMailer\\PHPMailer\\PHPMailer')) {
+            if (! class_exists('\\PHPMailer\\PHPMailer\\PHPMailer')) {
                 return false; // PHPMailer não disponível
             }
             
             // Obter email do usuário (seria consultado no banco)
             $emailUsuario = $this->obterEmailUsuario($notificacao->obterUsuarioId());
-            if (!$emailUsuario) {
+            if (! $emailUsuario) {
                 return false;
             }
             
@@ -76,7 +76,7 @@ final class CanalEmail implements CanalInterface
         return [
             'nome' => 'Email',
             'descricao' => 'Notificações por email via SMTP',
-            'ativo' => !empty($this->configuracoes['smtp_host']),
+            'ativo' => ! empty($this->configuracoes['smtp_host']),
             'configuravel' => true,
             'configuracoes' => [
                 'servidor' => $this->configuracoes['smtp_host'],

@@ -90,7 +90,7 @@ final class BackupManager
         $backupId = uniqid('incr_backup_');
         $lastBackup = $this->getBackupMetadata($baseBackupId);
         
-        if (!$lastBackup) {
+        if (! $lastBackup) {
             throw new \RuntimeException("Backup base não encontrado: {$baseBackupId}");
         }
         
@@ -128,7 +128,7 @@ final class BackupManager
         $restoreId = uniqid('restore_');
         $backup = $this->getBackupMetadata($backupId);
         
-        if (!$backup) {
+        if (! $backup) {
             throw new \RuntimeException("Backup não encontrado: {$backupId}");
         }
         
@@ -143,7 +143,7 @@ final class BackupManager
         
         // Verificar integridade antes da restauração
         $integrityCheck = $this->verifyBackupIntegrity($backupId);
-        if (!$integrityCheck['valid']) {
+        if (! $integrityCheck['valid']) {
             throw new \RuntimeException("Backup corrompido ou inválido");
         }
         
@@ -349,7 +349,7 @@ final class BackupManager
         ];
         
         foreach ($directories as $dir) {
-            if (!is_dir($dir)) {
+            if (! is_dir($dir)) {
                 mkdir($dir, 0700, true);
             }
         }
@@ -403,7 +403,7 @@ final class BackupManager
     {
         $backupPath = $this->findComponentBackupPath($component, $backupId);
         
-        if (!file_exists($backupPath)) {
+        if (! file_exists($backupPath)) {
             throw new \RuntimeException("Backup do componente '{$component}' não encontrado");
         }
         
@@ -438,7 +438,7 @@ final class BackupManager
         $integrity = ['valid' => true, 'checks' => []];
         
         foreach ($backup['results'] as $component => $result) {
-            if (!$result['success']) {
+            if (! $result['success']) {
                 continue;
             }
             

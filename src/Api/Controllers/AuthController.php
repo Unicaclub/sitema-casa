@@ -65,7 +65,7 @@ final class AuthController
             // Autenticar
             $result = $this->auth->authenticate($email, $password, $context);
             
-            if (!$result['success']) {
+            if (! $result['success']) {
                 $httpCode = match ($result['error_code'] ?? 'UNKNOWN') {
                     'INVALID_CREDENTIALS' => 401,
                     'ACCOUNT_LOCKED' => 423,
@@ -115,7 +115,7 @@ final class AuthController
             // Renovar token
             $result = $this->auth->refreshToken($refreshToken, $context);
             
-            if (!$result['success']) {
+            if (! $result['success']) {
                 $httpCode = match ($result['error_code'] ?? 'UNKNOWN') {
                     'INVALID_REFRESH_TOKEN', 'REFRESH_TOKEN_NOT_FOUND' => 401,
                     'USER_NOT_FOUND' => 404,
@@ -148,14 +148,14 @@ final class AuthController
             $accessToken = $this->extractTokenFromHeader($request);
             $refreshToken = $request->get('refresh_token');
             
-            if (!$accessToken) {
+            if (! $accessToken) {
                 return $this->errorResponse('Token de acesso não encontrado', 401);
             }
             
             // Fazer logout
             $result = $this->auth->logout($accessToken, $refreshToken);
             
-            if (!$result['success']) {
+            if (! $result['success']) {
                 return $this->errorResponse($result['error'], 400);
             }
             
@@ -177,14 +177,14 @@ final class AuthController
         try {
             $accessToken = $this->extractTokenFromHeader($request);
             
-            if (!$accessToken) {
+            if (! $accessToken) {
                 return $this->errorResponse('Token de acesso não encontrado', 401);
             }
             
             // Validar token
             $validation = $this->auth->validateAccessToken($accessToken);
             
-            if (!$validation['valid']) {
+            if (! $validation['valid']) {
                 return $this->errorResponse('Token inválido', 401);
             }
             
@@ -219,7 +219,7 @@ final class AuthController
             // Simular verificação 2FA
             $isValid = $this->verify2FACode($userId, $code);
             
-            if (!$isValid) {
+            if (! $isValid) {
                 return $this->errorResponse('Código 2FA inválido', 401);
             }
             
@@ -287,7 +287,7 @@ final class AuthController
             // Validar token de reset
             $validation = $this->jwt->validateToken($token);
             
-            if (!$validation['valid']) {
+            if (! $validation['valid']) {
                 return $this->errorResponse('Token de reset inválido ou expirado', 401);
             }
             
@@ -324,7 +324,7 @@ final class AuthController
     {
         $authHeader = $request->getHeader('Authorization');
         
-        if (!$authHeader) {
+        if (! $authHeader) {
             return null;
         }
         

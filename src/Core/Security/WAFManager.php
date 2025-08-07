@@ -401,7 +401,7 @@ final class WAFManager
             'description' => $rule['description']
         ];
         
-        if (!$rule['enabled']) {
+        if (! $rule['enabled']) {
             return $result;
         }
         

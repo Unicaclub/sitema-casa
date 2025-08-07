@@ -265,7 +265,7 @@ final class AIMonitoringManager
             
             // Detectar anomalias comportamentais
             $anomalies = $this->detectBehavioralAnomalies($behaviorProfile);
-            if (!empty($anomalies)) {
+            if (! empty($anomalies)) {
                 $analysis['anomalous_behaviors'][$userId] = $anomalies;
             }
             
@@ -275,7 +275,7 @@ final class AIMonitoringManager
             
             // Indicadores de insider threat
             $insiderIndicators = $this->analyzeInsiderThreatIndicators($behaviorProfile, $activities);
-            if (!empty($insiderIndicators)) {
+            if (! empty($insiderIndicators)) {
                 $analysis['insider_threat_indicators'][$userId] = $insiderIndicators;
             }
         }

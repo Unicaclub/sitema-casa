@@ -96,24 +96,24 @@ final class JWTManager
             
             // Decode header
             $header = json_decode($this->base64UrlDecode($headerB64), true);
-            if (!$header) {
+            if (! $header) {
                 throw new Exception('Invalid token header');
             }
             
             // Validate algorithm
-            if (!isset($header['alg']) || !in_array($header['alg'], $this->allowedAlgorithms)) {
+            if (! isset($header['alg']) || ! in_array($header['alg'], $this->allowedAlgorithms)) {
                 throw new Exception('Invalid or unsupported algorithm');
             }
             
             // Decode payload
             $payload = json_decode($this->base64UrlDecode($payloadB64), true);
-            if (!$payload) {
+            if (! $payload) {
                 throw new Exception('Invalid token payload');
             }
             
             // Verify signature
             $expectedSignature = $this->createSignature($headerB64 . '.' . $payloadB64, $header['alg']);
-            if (!hash_equals($expectedSignature, $signatureB64)) {
+            if (! hash_equals($expectedSignature, $signatureB64)) {
                 throw new Exception('Invalid token signature');
             }
             
@@ -183,13 +183,13 @@ final class JWTManager
     {
         $parsed = $this->parseToken($token);
         
-        if (!$parsed['success']) {
+        if (! $parsed['success']) {
             return true;
         }
         
         $payload = $parsed['payload'];
         
-        if (!isset($payload['exp'])) {
+        if (! isset($payload['exp'])) {
             return true;
         }
         
@@ -203,13 +203,13 @@ final class JWTManager
     {
         $parsed = $this->parseToken($token);
         
-        if (!$parsed['success']) {
+        if (! $parsed['success']) {
             return 0;
         }
         
         $payload = $parsed['payload'];
         
-        if (!isset($payload['exp'])) {
+        if (! isset($payload['exp'])) {
             return 0;
         }
         
@@ -341,7 +341,7 @@ final class JWTManager
      */
     public function setAlgorithm(string $algorithm): void
     {
-        if (!in_array($algorithm, $this->allowedAlgorithms)) {
+        if (! in_array($algorithm, $this->allowedAlgorithms)) {
             throw new Exception("Unsupported algorithm: {$algorithm}");
         }
         
@@ -355,14 +355,14 @@ final class JWTManager
     {
         $parsed = $this->parseToken($token);
         
-        if (!$parsed['success']) {
+        if (! $parsed['success']) {
             return false;
         }
         
         $jti = $parsed['payload']['jti'] ?? null;
         $exp = $parsed['payload']['exp'] ?? null;
         
-        if (!$jti || !$exp) {
+        if (! $jti || ! $exp) {
             return false;
         }
         
@@ -386,13 +386,13 @@ final class JWTManager
     {
         $parsed = $this->parseToken($token);
         
-        if (!$parsed['success']) {
+        if (! $parsed['success']) {
             return true;
         }
         
         $jti = $parsed['payload']['jti'] ?? null;
         
-        if (!$jti) {
+        if (! $jti) {
             return true;
         }
         

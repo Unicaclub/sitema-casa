@@ -94,7 +94,7 @@ final class VendasController extends ControladorBase
         
         $saleData = $sale->first();
         
-        if (!$saleData) {
+        if (! $saleData) {
             return $this->error('Venda não encontrada', 404);
         }
         
@@ -151,7 +151,7 @@ final class VendasController extends ControladorBase
         
         $this->applyTenantFilter($customer);
         
-        if (!$customer->exists()) {
+        if (! $customer->exists()) {
             return $this->error('Cliente não encontrado', 404);
         }
         
@@ -172,7 +172,7 @@ final class VendasController extends ControladorBase
                 
                 $productData = $product->first();
                 
-                if (!$productData) {
+                if (! $productData) {
                     throw new \Exception("Produto ID {$item['produto_id']} não encontrado");
                 }
                 
@@ -234,6 +234,7 @@ final class VendasController extends ControladorBase
                 ->first();
             
             $this->clearCache('sales_*');
+            $this->clearCache('sales_stats');
             
             return $this->success($sale, 'Venda criada com sucesso', 201);
             
@@ -268,7 +269,7 @@ final class VendasController extends ControladorBase
         
         $saleData = $sale->first();
         
-        if (!$saleData) {
+        if (! $saleData) {
             return $this->error('Venda não encontrada', 404);
         }
         
@@ -293,6 +294,7 @@ final class VendasController extends ControladorBase
             ->first();
         
         $this->clearCache('sales_*');
+        $this->clearCache('sales_stats');
         
         return $this->success($updatedSale, 'Venda atualizada com sucesso');
     }
@@ -314,7 +316,7 @@ final class VendasController extends ControladorBase
         
         $saleData = $sale->first();
         
-        if (!$saleData) {
+        if (! $saleData) {
             return $this->error('Venda não encontrada', 404);
         }
         
@@ -344,6 +346,7 @@ final class VendasController extends ControladorBase
             $this->database->commit();
             
             $this->clearCache('sales_*');
+            $this->clearCache('sales_stats');
             
             return $this->success(null, 'Venda removida com sucesso');
             
@@ -361,7 +364,7 @@ final class VendasController extends ControladorBase
     {
         $this->authorize('vendas.view');
         
-        return $this->cached('sales_goals', function() use ($request) {
+        return $this->cached('sales_goals', function () use ($request) {
             $period = $request->query('period', 'month'); // month, quarter, year
             
             $currentDate = Carbon::now();
@@ -444,7 +447,7 @@ final class VendasController extends ControladorBase
         $period = (int) $request->query('period', 30); // days
         $startDate = Carbon::now()->subDays($period)->startOfDay();
         
-        return $this->cached("sales_by_salesperson_{$period}", function() use ($startDate) {
+        return $this->cached("sales_by_salesperson_{$period}", function () use ($startDate) {
             $query = $this->database->table('vendas')
                 ->join('users', 'vendas.usuario_id', '=', 'users.id')
                 ->select([
@@ -499,20 +502,26 @@ final class VendasController extends ControladorBase
      */
     private function getSalesStats(): array
     {
-        $query = $this->database->table('vendas');
-        $this->applyTenantFilter($query);
-        
-        $total = $query->count();
-        $pendentes = $query->where('status', 'pendente')->count();
-        $concluidas = $query->where('status', 'concluida')->count();
-        $canceladas = $query->where('status', 'cancelada')->count();
-        
-        return [
-            'total' => $total,
-            'pendentes' => $pendentes,
-            'concluidas' => $concluidas,
-            'canceladas' => $canceladas,
-        ];
+        return $this->cached('sales_stats', function () {
+            $query = $this->database->table('vendas')
+                ->selectRaw('
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN status = "pendente" THEN 1 END) as pendentes,
+                    COUNT(CASE WHEN status = "concluida" THEN 1 END) as concluidas,
+                    COUNT(CASE WHEN status = "cancelada" THEN 1 END) as canceladas
+                ');
+            
+            $this->applyTenantFilter($query);
+            
+            $stats = $query->first();
+            
+            return [
+                'total' => (int) $stats['total'],
+                'pendentes' => (int) $stats['pendentes'],
+                'concluidas' => (int) $stats['concluidas'],
+                'canceladas' => (int) $stats['canceladas'],
+            ];
+        }, 300);
     }
     
     /**

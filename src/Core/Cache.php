@@ -32,11 +32,11 @@ class Cache
             $this->config['timeout'] ?? 5
         );
         
-        if (!$connected) {
+        if (! $connected) {
             throw new \Exception('Não foi possível conectar ao Redis');
         }
         
-        if (!empty($this->config['password'])) {
+        if (! empty($this->config['password'])) {
             $this->redis->auth($this->config['password']);
         }
         
@@ -285,7 +285,7 @@ class TaggedCache
             $tagKey = $this->prefix . 'tag:' . $tag;
             $keys = $this->redis->sMembers($tagKey);
             
-            if (!empty($keys)) {
+            if (! empty($keys)) {
                 // Remove todas as chaves da tag
                 $fullKeys = array_map(fn($key) => $this->prefix . $key, $keys);
                 $this->redis->del($fullKeys);

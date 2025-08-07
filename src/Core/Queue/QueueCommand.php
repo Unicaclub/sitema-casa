@@ -97,7 +97,7 @@ final class QueueCommand
         $jobData = isset($args[1]) ? json_decode($args[1], true) : [];
         $tenantId = $args[2] ?? 'default';
         
-        if (!class_exists($jobClass)) {
+        if (! class_exists($jobClass)) {
             $this->console->error("Job class not found: {$jobClass}");
             return;
         }
@@ -141,7 +141,7 @@ final class QueueCommand
         
         $this->console->warning("⚠️  This will clear all jobs in the queue(s)");
         
-        if (!$this->console->confirm("Are you sure you want to continue?")) {
+        if (! $this->console->confirm("Are you sure you want to continue?")) {
             $this->console->info("Operation cancelled");
             return;
         }
@@ -216,7 +216,7 @@ final class QueueCommand
             $this->console->line("");
             
             // Alerts
-            if (!empty($dashboardData['alerts'])) {
+            if (! empty($dashboardData['alerts'])) {
                 $this->console->warning("🚨 Active Alerts:");
                 foreach ($dashboardData['alerts'] as $alert) {
                     $this->console->line("  • {$alert['message']}", 'red');

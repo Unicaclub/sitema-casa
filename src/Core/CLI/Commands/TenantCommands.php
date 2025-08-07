@@ -240,7 +240,7 @@ class TenantCommands
         $tenantId = isset($args[0]) ? (int)$args[0] : null;
         $days = isset($args[1]) ? (int)$args[1] : 7;
         
-        if (!$tenantId) {
+        if (! $tenantId) {
             echo "Uso: php artisan tenant:security-report <tenant_id> [days=7]\n";
             return 1;
         }
@@ -265,7 +265,7 @@ class TenantCommands
             echo "  • IPs únicos (24h): {$security['unique_ips_24h']}\n\n";
             
             // Atividades suspeitas
-            if (!empty($report['suspicious_activity'])) {
+            if (! empty($report['suspicious_activity'])) {
                 echo "⚠️  ATIVIDADES SUSPEITAS:\n";
                 foreach ($report['suspicious_activity'] as $activity) {
                     echo "  • {$activity['description']}\n";
@@ -274,7 +274,7 @@ class TenantCommands
             }
             
             // Detecção de vazamento
-            if (!empty($report['data_leakage_detection'])) {
+            if (! empty($report['data_leakage_detection'])) {
                 echo "🚨 DETECÇÃO DE VAZAMENTO DE DADOS:\n";
                 foreach ($report['data_leakage_detection'] as $leakage) {
                     echo "  • {$leakage['description']} ({$leakage['count']} ocorrências)\n";
@@ -283,7 +283,7 @@ class TenantCommands
             }
             
             // Recomendações
-            if (!empty($report['recommendations'])) {
+            if (! empty($report['recommendations'])) {
                 echo "💡 RECOMENDAÇÕES:\n";
                 foreach ($report['recommendations'] as $rec) {
                     $priority = strtoupper($rec['priority']);
@@ -442,7 +442,7 @@ class TenantCommands
     {
         $tenant = $this->database->table('tenants')->where('id', $tenantId)->first();
         
-        if (!$tenant) {
+        if (! $tenant) {
             echo "Tenant {$tenantId} não encontrado.\n";
             return;
         }
@@ -491,7 +491,7 @@ class TenantCommands
         $issues = [];
         
         // Verificar se tenant existe
-        if (!$this->tenantManager->tenantExists($tenantId)) {
+        if (! $this->tenantManager->tenantExists($tenantId)) {
             $issues[] = "Tenant {$tenantId} não existe ou está inativo";
             return $issues;
         }

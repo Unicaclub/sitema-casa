@@ -59,7 +59,7 @@ final class AuthManager
     {
         $name = $name ?? $this->defaultGuard;
         
-        if (!isset($this->guards[$name])) {
+        if (! isset($this->guards[$name])) {
             $this->guards[$name] = $this->createGuard($name);
         }
         
@@ -103,13 +103,13 @@ final class AuthManager
         $guard = $this->guard();
         
         // Rate limiting check
-        if (!$this->checkRateLimit($credentials['email'] ?? '', $tenantId)) {
+        if (! $this->checkRateLimit($credentials['email'] ?? '', $tenantId)) {
             throw new AuthenticationException('Too many login attempts. Please try again later.');
         }
         
         $result = $guard->attempt($credentials, $remember);
         
-        if (!$result) {
+        if (! $result) {
             $this->recordFailedAttempt($credentials['email'] ?? '', $tenantId);
         } else {
             $this->clearFailedAttempts($credentials['email'] ?? '', $tenantId);
@@ -201,7 +201,7 @@ final class AuthManager
     {
         $jwtGuard = $this->guard('jwt');
         
-        if (!$jwtGuard instanceof JwtGuard) {
+        if (! $jwtGuard instanceof JwtGuard) {
             throw new \InvalidArgumentException('JWT guard not available');
         }
         
@@ -215,7 +215,7 @@ final class AuthManager
     {
         $jwtGuard = $this->guard('jwt');
         
-        if (!$jwtGuard instanceof JwtGuard) {
+        if (! $jwtGuard instanceof JwtGuard) {
             throw new \InvalidArgumentException('JWT guard not available');
         }
         
@@ -229,7 +229,7 @@ final class AuthManager
     {
         $jwtGuard = $this->guard('jwt');
         
-        if (!$jwtGuard instanceof JwtGuard) {
+        if (! $jwtGuard instanceof JwtGuard) {
             return false;
         }
         
@@ -243,7 +243,7 @@ final class AuthManager
     {
         $user = $this->user();
         
-        if (!$user) {
+        if (! $user) {
             return false;
         }
         
@@ -273,7 +273,7 @@ final class AuthManager
     {
         $user = $this->user();
         
-        if (!$user) {
+        if (! $user) {
             return false;
         }
         
@@ -295,7 +295,7 @@ final class AuthManager
      */
     public function authorize(string $permission, string $tenantId = null): void
     {
-        if (!$this->can($permission, $tenantId)) {
+        if (! $this->can($permission, $tenantId)) {
             throw new AuthorizationException("Insufficient permissions for: {$permission}");
         }
     }
@@ -330,7 +330,7 @@ final class AuthManager
     {
         $twoFactor = $this->getTwoFactorData($user);
         
-        if (!$twoFactor || !$this->security->verifyTwoFactorCode($twoFactor['secret'], $code)) {
+        if (! $twoFactor || ! $this->security->verifyTwoFactorCode($twoFactor['secret'], $code)) {
             return false;
         }
         
@@ -364,7 +364,7 @@ final class AuthManager
     {
         $twoFactor = $this->getTwoFactorData($user);
         
-        if (!$twoFactor || !$twoFactor['enabled']) {
+        if (! $twoFactor || ! $twoFactor['enabled']) {
             return false;
         }
         
@@ -453,7 +453,7 @@ final class AuthManager
     {
         $provider = $provider ?? $this->config['providers']['default'] ?? 'database';
         
-        if (!isset($this->userProviders[$provider])) {
+        if (! isset($this->userProviders[$provider])) {
             $this->userProviders[$provider] = $this->createUserProviderInstance($provider);
         }
         

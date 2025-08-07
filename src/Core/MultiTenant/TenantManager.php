@@ -63,13 +63,13 @@ class TenantManager
      */
     public function getCurrentTenant(): ?array
     {
-        if (!$this->currentTenantId) {
+        if (! $this->currentTenantId) {
             return null;
         }
         
         if ($this->currentTenant === null) {
             $cacheKey = "tenant:{$this->currentTenantId}";
-            $this->currentTenant = $this->cache->remember($cacheKey, 3600, function() {
+            $this->currentTenant = $this->cache->remember($cacheKey, 3600, function () {
                 return $this->database->table('companies')
                     ->where('id', $this->currentTenantId)
                     ->first();
@@ -85,7 +85,7 @@ class TenantManager
     public function tenantExists(int $tenantId): bool
     {
         $cacheKey = "tenant_exists:{$tenantId}";
-        return $this->cache->remember($cacheKey, 3600, function() use ($tenantId) {
+        return $this->cache->remember($cacheKey, 3600, function () use ($tenantId) {
             return $this->database->table('companies')
                 ->where('id', $tenantId)
                 ->where('active', true)
@@ -99,7 +99,7 @@ class TenantManager
     public function validateTenantAccess(int $userId, int $tenantId): bool
     {
         $cacheKey = "tenant_access:{$userId}:{$tenantId}";
-        return $this->cache->remember($cacheKey, 1800, function() use ($userId, $tenantId) {
+        return $this->cache->remember($cacheKey, 1800, function () use ($userId, $tenantId) {
             return $this->database->table('users')
                 ->where('id', $userId)
                 ->where('company_id', $tenantId)
@@ -115,7 +115,7 @@ class TenantManager
     {
         $tenantId = $tenantId ?? $this->getCurrentTenantId();
         
-        if (!$tenantId) {
+        if (! $tenantId) {
             throw new RuntimeException('Nenhum tenant definido para escopo da query');
         }
         
@@ -157,7 +157,7 @@ class TenantManager
      */
     public function getActiveTenants(): array
     {
-        return $this->cache->remember('active_tenants', 3600, function() {
+        return $this->cache->remember('active_tenants', 3600, function () {
             return $this->database->table('companies')
                 ->where('active', true)
                 ->select(['id', 'name', 'code'])
@@ -171,7 +171,7 @@ class TenantManager
     public function getTenantStats(int $tenantId): array
     {
         $cacheKey = $this->tenantCacheKey('stats');
-        return $this->cache->remember($cacheKey, 1800, function() use ($tenantId) {
+        return $this->cache->remember($cacheKey, 1800, function () use ($tenantId) {
             $stats = [];
             
             // Estatísticas das principais entidades
@@ -202,10 +202,10 @@ class TenantManager
      */
     private function tableHasColumn(string $table, string $column): bool
     {
-        if (!$table) return false;
+        if (! $table) return false;
         
         $cacheKey = "table_schema:{$table}:{$column}";
-        return $this->cache->remember($cacheKey, 86400, function() use ($table, $column) {
+        return $this->cache->remember($cacheKey, 86400, function () use ($table, $column) {
             try {
                 $result = $this->database->select("
                     SELECT COUNT(*) as count 
@@ -244,7 +244,7 @@ class TenantManager
     {
         $tenantId = $tenantId ?? $this->getCurrentTenantId();
         
-        if (!$tenantId) {
+        if (! $tenantId) {
             return false;
         }
         

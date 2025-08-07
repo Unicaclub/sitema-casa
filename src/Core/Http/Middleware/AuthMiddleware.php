@@ -27,7 +27,7 @@ final class AuthMiddleware implements MiddlewareInterface
     {
         $token = $request->getBearerToken();
         
-        if (!$token) {
+        if (! $token) {
             throw new AuthenticationException('Authentication token required', 401);
         }
         
@@ -41,7 +41,7 @@ final class AuthMiddleware implements MiddlewareInterface
             $this->auth->setTenant($tenantId);
         }
         
-        if (!$this->auth->check()) {
+        if (! $this->auth->check()) {
             throw new AuthenticationException('Invalid or expired token', 401);
         }
         

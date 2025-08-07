@@ -87,7 +87,7 @@ final class SessionGuard implements GuardInterface
         }
         
         // Try remember token if no session user
-        if (!$this->user && $this->isRememberTokenValid()) {
+        if (! $this->user && $this->isRememberTokenValid()) {
             $this->loginViaRemember();
         }
         
@@ -303,7 +303,7 @@ final class SessionGuard implements GuardInterface
      */
     protected function isRememberTokenValid(): bool
     {
-        if (!isset($_COOKIE['remember_token'])) {
+        if (! isset($_COOKIE['remember_token'])) {
             return false;
         }
         
@@ -325,7 +325,7 @@ final class SessionGuard implements GuardInterface
      */
     protected function loginViaRemember(): void
     {
-        if (!isset($_COOKIE['remember_token'])) {
+        if (! isset($_COOKIE['remember_token'])) {
             return;
         }
         

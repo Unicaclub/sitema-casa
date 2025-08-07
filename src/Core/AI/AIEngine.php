@@ -95,7 +95,7 @@ final class AIEngine
         $startTime = microtime(true);
         
         // Validar entrada
-        if (!isset($this->availableModels[$modelType])) {
+        if (! isset($this->availableModels[$modelType])) {
             throw new \InvalidArgumentException("Model type '{$modelType}' not available");
         }
         
@@ -166,7 +166,7 @@ final class AIEngine
         $trainingId = $this->generateTrainingId();
         
         // Validações
-        if (!isset($this->availableModels[$modelType])) {
+        if (! isset($this->availableModels[$modelType])) {
             throw new \InvalidArgumentException("Model type '{$modelType}' not available");
         }
         
@@ -422,7 +422,7 @@ final class AIEngine
     {
         $model = $this->loadModel($modelId);
         
-        if (!method_exists($model, 'explain')) {
+        if (! method_exists($model, 'explain')) {
             throw new \RuntimeException("Model does not support explainability");
         }
         

@@ -124,19 +124,19 @@ class SecurityManager
             $errors[] = "Senha deve ter pelo menos {$this->config['password_min_length']} caracteres";
         }
         
-        if (!preg_match('/[A-Z]/', $password)) {
+        if (! preg_match('/[A-Z]/', $password)) {
             $errors[] = 'Senha deve conter pelo menos uma letra maiúscula';
         }
         
-        if (!preg_match('/[a-z]/', $password)) {
+        if (! preg_match('/[a-z]/', $password)) {
             $errors[] = 'Senha deve conter pelo menos uma letra minúscula';
         }
         
-        if (!preg_match('/[0-9]/', $password)) {
+        if (! preg_match('/[0-9]/', $password)) {
             $errors[] = 'Senha deve conter pelo menos um número';
         }
         
-        if (!preg_match('/[^A-Za-z0-9]/', $password)) {
+        if (! preg_match('/[^A-Za-z0-9]/', $password)) {
             $errors[] = 'Senha deve conter pelo menos um caractere especial';
         }
         
@@ -173,7 +173,7 @@ class SecurityManager
         $key = "csrf_token:{$sessionId}";
         $stored = $this->cache->get($key);
         
-        if (!$stored || !hash_equals($stored, $token)) {
+        if (! $stored || ! hash_equals($stored, $token)) {
             $this->logger->warning('Invalid CSRF token', [
                 'session_id' => $sessionId,
                 'provided_token' => substr($token, 0, 8) . '...'
@@ -416,7 +416,7 @@ class SecurityManager
         
         // Evitar spam de alertas
         $alertKey = 'security_alert:' . md5($message . serialize($context));
-        if (!$this->cache->get($alertKey)) {
+        if (! $this->cache->get($alertKey)) {
             $this->cache->set($alertKey, true, 300); // 5 minutos
             
             // Aqui enviaria email/notificação real

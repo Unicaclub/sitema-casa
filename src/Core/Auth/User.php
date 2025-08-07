@@ -111,7 +111,7 @@ final class User implements AuthenticatableInterface
      */
     public function getRoles(string $tenantId = null): array
     {
-        if (!$this->database) {
+        if (! $this->database) {
             return [];
         }
         
@@ -132,7 +132,7 @@ final class User implements AuthenticatableInterface
      */
     public function getPermissions(string $tenantId = null): array
     {
-        if (!$this->database) {
+        if (! $this->database) {
             return [];
         }
         
@@ -177,7 +177,7 @@ final class User implements AuthenticatableInterface
      */
     public function getTenants(): array
     {
-        if (!$this->database) {
+        if (! $this->database) {
             return [];
         }
         
@@ -196,7 +196,7 @@ final class User implements AuthenticatableInterface
      */
     public function belongsToTenant(string $tenantId): bool
     {
-        if (!$this->database) {
+        if (! $this->database) {
             return false;
         }
         
@@ -267,7 +267,7 @@ final class User implements AuthenticatableInterface
      */
     public function isEmailVerified(): bool
     {
-        return !empty($this->attributes['email_verified_at']);
+        return ! empty($this->attributes['email_verified_at']);
     }
     
     /**

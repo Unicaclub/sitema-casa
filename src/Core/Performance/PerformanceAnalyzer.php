@@ -115,7 +115,7 @@ final class PerformanceAnalyzer
             
             // Detectar anomalias
             $anomalias = $this->detectarAnomalias($metricas);
-            if (!empty($anomalias)) {
+            if (! empty($anomalias)) {
                 $metricas['anomalias'] = $anomalias;
             }
             

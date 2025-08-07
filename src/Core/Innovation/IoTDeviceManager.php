@@ -66,7 +66,7 @@ class IoTDeviceManager
      */
     public function connectDevice(string $deviceId, array $credentials): bool
     {
-        if (!isset($this->connectedDevices[$deviceId])) {
+        if (! isset($this->connectedDevices[$deviceId])) {
             return false;
         }
         
@@ -79,7 +79,7 @@ class IoTDeviceManager
             'device_fingerprint' => $this->generateDeviceFingerprint($device)
         ]);
         
-        if (!$trustResult['verified']) {
+        if (! $trustResult['verified']) {
             return false;
         }
         
@@ -97,13 +97,13 @@ class IoTDeviceManager
      */
     public function sendCommand(string $deviceId, array $command): array
     {
-        if (!$this->isDeviceConnected($deviceId)) {
+        if (! $this->isDeviceConnected($deviceId)) {
             return ['success' => false, 'error' => 'Device not connected'];
         }
         
         $device = $this->connectedDevices[$deviceId];
         
-        if (!$this->isCommandAuthorized($device, $command)) {
+        if (! $this->isCommandAuthorized($device, $command)) {
             return ['success' => false, 'error' => 'Command not authorized'];
         }
         
@@ -124,7 +124,7 @@ class IoTDeviceManager
      */
     public function processDeviceData(string $deviceId, array $data): void
     {
-        if (!$this->isDeviceConnected($deviceId)) {
+        if (! $this->isDeviceConnected($deviceId)) {
             return;
         }
         
@@ -326,7 +326,7 @@ class IoTDeviceManager
     {
         $deviceProfile = $this->deviceProfiles[$device['type']] ?? null;
         
-        if (!$deviceProfile) {
+        if (! $deviceProfile) {
             return false;
         }
         

@@ -79,7 +79,7 @@ class MonitoringManager
     {
         $cacheKey = "tenant_performance_metrics:{$tenantId}";
         
-        return $this->cache->remember($cacheKey, 300, function() use ($tenantId) {
+        return $this->cache->remember($cacheKey, 300, function () use ($tenantId) {
             $last24h = date('Y-m-d H:i:s', strtotime('-24 hours'));
             
             // Tempo médio de queries
@@ -482,7 +482,7 @@ class MonitoringManager
                     AND table_name = ?
                 ", [$table]);
                 
-                if (!empty($result)) {
+                if (! empty($result)) {
                     $totalSize += $result[0]['size_mb'] ?? 0;
                 }
             } catch (\Exception $e) {

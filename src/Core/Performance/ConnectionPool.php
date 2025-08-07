@@ -50,7 +50,7 @@ final class ConnectionPool
         
         // Tentar obter conexão disponível
         while (microtime(true) - $startTime < $timeout) {
-            if (!$this->availableConnections->isEmpty()) {
+            if (! $this->availableConnections->isEmpty()) {
                 $connection = $this->availableConnections->dequeue();
                 
                 // Verificar se conexão ainda está viva
@@ -169,7 +169,7 @@ final class ConnectionPool
         $cleanConnections = new SplQueue();
         
         // Verificar conexões disponíveis
-        while (!$this->availableConnections->isEmpty()) {
+        while (! $this->availableConnections->isEmpty()) {
             $connection = $this->availableConnections->dequeue();
             
             if ($this->isConnectionHealthy($connection)) {
@@ -249,7 +249,7 @@ final class ConnectionPool
         // Scale down se utilização baixa
         if ($metrics['utilization_rate'] < 0.3 && $this->currentSize > $this->minSize) {
             $connectionsToRemove = min(1, $this->currentSize - $this->minSize);
-            for ($i = 0; $i < $connectionsToRemove && !$this->availableConnections->isEmpty(); $i++) {
+            for ($i = 0; $i < $connectionsToRemove && ! $this->availableConnections->isEmpty(); $i++) {
                 $this->availableConnections->dequeue();
                 $this->currentSize--;
             }
@@ -367,7 +367,7 @@ final class ConnectionPool
     private function closeAllConnections(): void
     {
         // Fechar conexões disponíveis
-        while (!$this->availableConnections->isEmpty()) {
+        while (! $this->availableConnections->isEmpty()) {
             $this->availableConnections->dequeue();
         }
         

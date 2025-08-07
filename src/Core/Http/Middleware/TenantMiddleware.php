@@ -34,14 +34,14 @@ class TenantMiddleware
     {
         try {
             // Verifica se usuário está autenticado
-            if (!$this->auth->check()) {
+            if (! $this->auth->check()) {
                 return new Response(['error' => 'Unauthorized'], 401);
             }
             
             $user = $this->auth->user();
             $userTenantId = $user->company_id ?? $user->tenant_id ?? null;
             
-            if (!$userTenantId) {
+            if (! $userTenantId) {
                 $this->logger->error('User without tenant', ['user_id' => $user->id]);
                 return new Response(['error' => 'User not associated with tenant'], 403);
             }
@@ -120,7 +120,7 @@ class TenantMiddleware
                 if (preg_match("#^{$route}/(\d+)#", $path, $matches)) {
                     $resourceId = (int)$matches[1];
                     
-                    if (!$this->tenantManager->validateOwnership($table, $resourceId, $userTenantId)) {
+                    if (! $this->tenantManager->validateOwnership($table, $resourceId, $userTenantId)) {
                         $this->tenantManager->logCrossTenantAccess(
                             $this->auth->id(),
                             0, // ID do tenant desconhecido
@@ -146,12 +146,12 @@ class TenantMiddleware
         }
         
         $contentType = $response->getHeader('Content-Type');
-        if (!str_contains($contentType, 'application/json')) {
+        if (! str_contains($contentType, 'application/json')) {
             return;
         }
         
         $data = $response->getData();
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             return;
         }
         
@@ -195,14 +195,14 @@ class TenantMiddleware
      */
     public function handleAdmin(Request $request, callable $next): Response
     {
-        if (!$this->auth->check()) {
+        if (! $this->auth->check()) {
             return new Response(['error' => 'Unauthorized'], 401);
         }
         
         $user = $this->auth->user();
         
         // Verifica se usuário tem permissão administrativa
-        if (!$this->hasAdminPermission($user)) {
+        if (! $this->hasAdminPermission($user)) {
             return new Response(['error' => 'Insufficient permissions'], 403);
         }
         

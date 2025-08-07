@@ -29,7 +29,7 @@ final class ConfiguracoesController extends BaseController
             ->where('tenant_id', $this->tenantId)
             ->first();
         
-        if (!$empresa) {
+        if (! $empresa) {
             return $this->erro('Dados da empresa não encontrados', 404);
         }
         
@@ -323,7 +323,7 @@ final class ConfiguracoesController extends BaseController
             ]);
             
             // Atribuir perfis
-            if (!empty($dados['perfis'])) {
+            if (! empty($dados['perfis'])) {
                 foreach ($dados['perfis'] as $perfilNome) {
                     $perfil = $this->database->table('roles')
                         ->where('name', $perfilNome)
@@ -384,7 +384,7 @@ final class ConfiguracoesController extends BaseController
             ->where('tenant_id', $this->tenantId)
             ->first();
         
-        if (!$usuarioTenant) {
+        if (! $usuarioTenant) {
             return $this->erro('Usuário não encontrado', 404);
         }
         
@@ -398,7 +398,7 @@ final class ConfiguracoesController extends BaseController
             if (isset($dados['password'])) $dadosUsuario['password'] = password_hash($dados['password'], PASSWORD_DEFAULT);
             if (isset($dados['ativo'])) $dadosUsuario['active'] = $dados['ativo'];
             
-            if (!empty($dadosUsuario)) {
+            if (! empty($dadosUsuario)) {
                 $dadosUsuario['updated_at'] = Carbon::now();
                 $this->database->table('users')
                     ->where('id', $id)
@@ -463,7 +463,7 @@ final class ConfiguracoesController extends BaseController
             ->where('tenant_id', $this->tenantId)
             ->first();
         
-        if (!$usuarioTenant) {
+        if (! $usuarioTenant) {
             return $this->erro('Usuário não encontrado', 404);
         }
         
@@ -580,7 +580,7 @@ final class ConfiguracoesController extends BaseController
             ->where('tenant_id', $this->tenantId)
             ->first();
         
-        if (!$backup) {
+        if (! $backup) {
             return $this->erro('Backup não encontrado', 404);
         }
         

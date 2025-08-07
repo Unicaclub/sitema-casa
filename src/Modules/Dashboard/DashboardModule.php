@@ -187,7 +187,7 @@ class DashboardService
     {
         $cacheKey = "dashboard:metrics:{$companyId}:{$period}";
         
-        return $this->cache->remember($cacheKey, function() use ($companyId, $period) {
+        return $this->cache->remember($cacheKey, function () use ($companyId, $period) {
             $startDate = date('Y-m-d', strtotime("-{$period} days"));
             $today = date('Y-m-d');
             
@@ -288,7 +288,7 @@ class DashboardService
     {
         $cacheKey = "dashboard:sales_chart:{$companyId}:{$period}:{$type}";
         
-        return $this->cache->remember($cacheKey, function() use ($companyId, $period, $type) {
+        return $this->cache->remember($cacheKey, function () use ($companyId, $period, $type) {
             switch ($type) {
                 case 'daily':
                     $dateFormat = '%Y-%m-%d';
@@ -344,13 +344,13 @@ class DashboardService
      */
     public function getFinancialSummary(int $companyId, string $month = null): array
     {
-        if (!$month) {
+        if (! $month) {
             $month = date('Y-m');
         }
         
         $cacheKey = "dashboard:financial:{$companyId}:{$month}";
         
-        return $this->cache->remember($cacheKey, function() use ($companyId, $month) {
+        return $this->cache->remember($cacheKey, function () use ($companyId, $month) {
             $startDate = $month . '-01';
             $endDate = date('Y-m-t', strtotime($startDate));
             
@@ -419,7 +419,7 @@ class DashboardService
     {
         $cacheKey = "dashboard:top_products:{$companyId}:{$limit}:{$period}";
         
-        return $this->cache->remember($cacheKey, function() use ($companyId, $limit, $period) {
+        return $this->cache->remember($cacheKey, function () use ($companyId, $limit, $period) {
             $startDate = date('Y-m-d', strtotime("-{$period} days"));
             
             return $this->database->select("
@@ -450,7 +450,7 @@ class DashboardService
     {
         $cacheKey = "dashboard:activities:{$companyId}:{$limit}";
         
-        return $this->cache->remember($cacheKey, function() use ($companyId, $limit) {
+        return $this->cache->remember($cacheKey, function () use ($companyId, $limit) {
             $activities = [];
             
             // Vendas recentes
@@ -522,7 +522,7 @@ class DashboardService
     {
         $cacheKey = "dashboard:alerts:{$companyId}";
         
-        return $this->cache->remember($cacheKey, function() use ($companyId) {
+        return $this->cache->remember($cacheKey, function () use ($companyId) {
             $alerts = [];
             
             // Produtos em falta

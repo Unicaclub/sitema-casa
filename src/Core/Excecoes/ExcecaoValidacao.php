@@ -39,7 +39,7 @@ class ExcecaoValidacao extends ExcecaoBase
      */
     public function adicionarErro(string $campo, string $mensagem): self
     {
-        if (!isset($this->errosValidacao[$campo])) {
+        if (! isset($this->errosValidacao[$campo])) {
             $this->errosValidacao[$campo] = [];
         }
         
@@ -54,7 +54,7 @@ class ExcecaoValidacao extends ExcecaoBase
      */
     public function temErro(string $campo): bool
     {
-        return isset($this->errosValidacao[$campo]) && !empty($this->errosValidacao[$campo]);
+        return isset($this->errosValidacao[$campo]) && ! empty($this->errosValidacao[$campo]);
     }
     
     /**
@@ -70,7 +70,7 @@ class ExcecaoValidacao extends ExcecaoBase
      */
     public function temErros(): bool
     {
-        return !empty($this->errosValidacao);
+        return ! empty($this->errosValidacao);
     }
     
     /**

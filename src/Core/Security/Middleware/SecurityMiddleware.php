@@ -28,13 +28,13 @@ class SecurityMiddleware
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
         
         // 1. Verificar IP whitelist
-        if (!$this->security->isIPWhitelisted($ip)) {
+        if (! $this->security->isIPWhitelisted($ip)) {
             $this->logger->warning('Access denied - IP not whitelisted', ['ip' => $ip]);
             return $this->blockRequest('Access denied', 403);
         }
         
         // 2. Rate limiting
-        if (!$this->security->checkRateLimit($ip, 'api')) {
+        if (! $this->security->checkRateLimit($ip, 'api')) {
             return $this->blockRequest('Rate limit exceeded', 429);
         }
         
@@ -48,7 +48,7 @@ class SecurityMiddleware
         }
         
         // 4. Validar headers de segurança
-        if (!$this->validateSecurityHeaders()) {
+        if (! $this->validateSecurityHeaders()) {
             return $this->blockRequest('Invalid security headers', 400);
         }
         
@@ -57,23 +57,23 @@ class SecurityMiddleware
         
         // 6. Validar CSRF para requests POST/PUT/DELETE
         if (in_array($request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH'])) {
-            if (!$this->validateCSRF($request)) {
+            if (! $this->validateCSRF($request)) {
                 return $this->blockRequest('CSRF token invalid', 403);
             }
         }
         
         // 7. Detectar tentativas de SQL injection
-        if (!$this->validateSQLInjection($request)) {
+        if (! $this->validateSQLInjection($request)) {
             return $this->blockRequest('Security violation detected', 403);
         }
         
         // 8. Detectar tentativas de XSS
-        if (!$this->validateXSS($request)) {
+        if (! $this->validateXSS($request)) {
             return $this->blockRequest('XSS attempt detected', 403);
         }
         
         // 9. Validar tamanho da requisição
-        if (!$this->validateRequestSize($request)) {
+        if (! $this->validateRequestSize($request)) {
             return $this->blockRequest('Request too large', 413);
         }
         
@@ -106,7 +106,7 @@ class SecurityMiddleware
         ];
         
         foreach ($headers as $header) {
-            if (!empty($_SERVER[$header])) {
+            if (! empty($_SERVER[$header])) {
                 $ips = explode(',', $_SERVER[$header]);
                 $ip = trim($ips[0]);
                 
@@ -192,7 +192,7 @@ class SecurityMiddleware
                 $request->input('_token') ?? 
                 $request->header('X-XSRF-TOKEN');
         
-        if (!$token || !$sessionId) {
+        if (! $token || ! $sessionId) {
             return false;
         }
         
@@ -211,7 +211,7 @@ class SecurityMiddleware
         }
         
         // Verificar query string
-        if (!empty($_SERVER['QUERY_STRING'])) {
+        if (! empty($_SERVER['QUERY_STRING'])) {
             $data['_query'] = $_SERVER['QUERY_STRING'];
         }
         

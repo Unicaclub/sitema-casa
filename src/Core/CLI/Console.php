@@ -52,7 +52,7 @@ class Console
             return;
         }
         
-        if (!isset($this->commands[$command])) {
+        if (! isset($this->commands[$command])) {
             echo "Comando '{$command}' não encontrado.\n";
             echo "Use 'php artisan help' para ver comandos disponíveis.\n";
             exit(1);
@@ -384,7 +384,7 @@ class BackupCreateCommand extends Command
         $timestamp = date('Y-m-d_H-i-s');
         $backupDir = __DIR__ . '/../../../storage/backups';
         
-        if (!is_dir($backupDir)) {
+        if (! is_dir($backupDir)) {
             mkdir($backupDir, 0755, true);
         }
         

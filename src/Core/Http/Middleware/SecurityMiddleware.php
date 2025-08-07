@@ -100,7 +100,7 @@ final class SecurityMiddleware implements MiddlewareInterface
         if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             $token = $request->header('X-CSRF-Token') ?? $request->input('_token');
             
-            if (!$token || !$this->security->validateCsrfToken($token)) {
+            if (! $token || ! $this->security->validateCsrfToken($token)) {
                 throw new \Exception('CSRF token mismatch', 419);
             }
         }
@@ -148,7 +148,7 @@ final class SecurityMiddleware implements MiddlewareInterface
                 }
             }
             
-            if (!$isValid) {
+            if (! $isValid) {
                 throw new \Exception('Invalid content type', 415);
             }
         }
@@ -178,7 +178,7 @@ final class SecurityMiddleware implements MiddlewareInterface
             ];
             
             $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-            if (!in_array($extension, $allowedExtensions)) {
+            if (! in_array($extension, $allowedExtensions)) {
                 throw new \Exception("File type not allowed: {$extension}", 415);
             }
             
@@ -193,7 +193,7 @@ final class SecurityMiddleware implements MiddlewareInterface
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ];
             
-            if (!in_array($mimeType, $allowedMimes)) {
+            if (! in_array($mimeType, $allowedMimes)) {
                 throw new \Exception("MIME type not allowed: {$mimeType}", 415);
             }
         }

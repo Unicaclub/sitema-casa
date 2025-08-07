@@ -152,7 +152,7 @@ final class Router
         $route = new Route($methods, $uri, $action);
         
         // Apply group attributes
-        if (!empty($this->routeGroups)) {
+        if (! empty($this->routeGroups)) {
             $route = $this->applyGroupAttributes($route);
         }
         
@@ -247,7 +247,7 @@ final class Router
         }
         
         // If path matches but method doesn't, throw method not allowed
-        if (!empty($allowedMethods)) {
+        if (! empty($allowedMethods)) {
             throw new MethodNotAllowedException("Method {$method} not allowed. Allowed: " . implode(', ', array_unique($allowedMethods)));
         }
         
@@ -404,7 +404,7 @@ final class Router
      */
     private function callControllerAction(string $action, Route $route, Request $request): Response
     {
-        if (!str_contains($action, '@')) {
+        if (! str_contains($action, '@')) {
             throw new \InvalidArgumentException("Invalid controller action format: {$action}");
         }
         
@@ -425,7 +425,7 @@ final class Router
         
         $instance = $this->container->make($controller);
         
-        if (!method_exists($instance, $method)) {
+        if (! method_exists($instance, $method)) {
             throw new \BadMethodCallException("Method {$method} does not exist on controller {$controller}");
         }
         
@@ -438,7 +438,7 @@ final class Router
         $response = $instance->{$method}(...$parameters);
         
         // Convert response to Response object if needed
-        if (!$response instanceof Response) {
+        if (! $response instanceof Response) {
             $response = new Response($response);
         }
         

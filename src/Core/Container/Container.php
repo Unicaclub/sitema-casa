@@ -45,7 +45,7 @@ final class Container implements ContainerInterface
             $concrete = $abstract;
         }
         
-        if (!$concrete instanceof Closure) {
+        if (! $concrete instanceof Closure) {
             $concrete = fn() => $this->build($concrete);
         }
         
@@ -223,7 +223,7 @@ final class Container implements ContainerInterface
             throw new ContainerException("Target class [{$concrete}] does not exist", 0, $e);
         }
         
-        if (!$reflector->isInstantiable()) {
+        if (! $reflector->isInstantiable()) {
             throw new ContainerException("Target [{$concrete}] is not instantiable");
         }
         
@@ -355,7 +355,7 @@ final class Container implements ContainerInterface
      */
     protected function removeAbstractAlias(string $searched): void
     {
-        if (!isset($this->aliases[$searched])) {
+        if (! isset($this->aliases[$searched])) {
             return;
         }
         

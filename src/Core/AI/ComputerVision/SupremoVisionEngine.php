@@ -374,7 +374,7 @@ final class SupremoVisionEngine
         
         // Reference comparison (if reference images provided)
         $referenceComparison = [];
-        if (!empty($referenceImages)) {
+        if (! empty($referenceImages)) {
             $referenceComparison = $this->compareWithReference($features, $referenceImages);
         }
         

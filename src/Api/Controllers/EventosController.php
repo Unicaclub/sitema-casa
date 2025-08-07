@@ -412,7 +412,7 @@ final class EventosController extends BaseController
                 [$id_evento]
             );
             
-            if (!$evento) {
+            if (! $evento) {
                 return $this->errorResponse('Evento não encontrado', 404);
             }
             
@@ -460,7 +460,7 @@ final class EventosController extends BaseController
             
             $status_validos = ['planejamento', 'vendas_abertas', 'vendas_encerradas', 'em_andamento', 'finalizado', 'cancelado'];
             
-            if (!in_array($dados['status_evento'], $status_validos)) {
+            if (! in_array($dados['status_evento'], $status_validos)) {
                 return $this->errorResponse('Status inválido', 400);
             }
             

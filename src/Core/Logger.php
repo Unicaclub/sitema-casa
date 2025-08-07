@@ -322,7 +322,7 @@ class FileLogHandler
     {
         $dir = dirname($this->config['path']);
         
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
     }

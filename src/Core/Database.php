@@ -26,7 +26,7 @@ class Database
     {
         $name = $name ?? $this->defaultConnection;
         
-        if (!isset($this->connections[$name])) {
+        if (! isset($this->connections[$name])) {
             $this->connections[$name] = $this->createConnection($name);
         }
         
@@ -381,11 +381,11 @@ class QueryBuilder
     {
         $sql = "SELECT COUNT(*) as total FROM {$this->table}";
         
-        if (!empty($this->joins)) {
+        if (! empty($this->joins)) {
             $sql .= ' ' . implode(' ', $this->joins);
         }
         
-        if (!empty($this->where)) {
+        if (! empty($this->where)) {
             $sql .= ' WHERE ' . implode(' AND ', $this->where);
         }
         
@@ -419,23 +419,23 @@ class QueryBuilder
         $sql = 'SELECT ' . implode(', ', $this->select);
         $sql .= " FROM {$this->table}";
         
-        if (!empty($this->joins)) {
+        if (! empty($this->joins)) {
             $sql .= ' ' . implode(' ', $this->joins);
         }
         
-        if (!empty($this->where)) {
+        if (! empty($this->where)) {
             $sql .= ' WHERE ' . implode(' AND ', $this->where);
         }
         
-        if (!empty($this->groupBy)) {
+        if (! empty($this->groupBy)) {
             $sql .= ' GROUP BY ' . implode(', ', $this->groupBy);
         }
         
-        if (!empty($this->having)) {
+        if (! empty($this->having)) {
             $sql .= ' HAVING ' . implode(' AND ', $this->having);
         }
         
-        if (!empty($this->orderBy)) {
+        if (! empty($this->orderBy)) {
             $sql .= ' ORDER BY ' . implode(', ', $this->orderBy);
         }
         

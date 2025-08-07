@@ -42,7 +42,7 @@ final class CanalPush implements CanalInterface
     public function enviar(Notificacao $notificacao): bool
     {
         try {
-            if (!$this->suporta($notificacao->obterTipo())) {
+            if (! $this->suporta($notificacao->obterTipo())) {
                 return false;
             }
             

@@ -42,7 +42,7 @@ final class CanalSms implements CanalInterface
     public function enviar(Notificacao $notificacao): bool
     {
         try {
-            if (!$this->suporta($notificacao->obterTipo())) {
+            if (! $this->suporta($notificacao->obterTipo())) {
                 return false;
             }
             
@@ -52,7 +52,7 @@ final class CanalSms implements CanalInterface
             
             // Obter telefone do usuário (seria consultado no banco)
             $telefoneUsuario = $this->obterTelefoneUsuario($notificacao->obterUsuarioId());
-            if (!$telefoneUsuario) {
+            if (! $telefoneUsuario) {
                 return false;
             }
             

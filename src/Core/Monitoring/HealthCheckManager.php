@@ -75,7 +75,7 @@ class HealthCheckManager
     {
         $config = $config ?? $this->healthChecks[$name] ?? null;
         
-        if (!$config) {
+        if (! $config) {
             return [
                 'status' => 'unknown',
                 'message' => 'Health check not found',
@@ -394,7 +394,7 @@ class HealthCheckManager
     {
         $method = $config['method'];
         
-        if (!method_exists($this, $method)) {
+        if (! method_exists($this, $method)) {
             throw new \RuntimeException("Health check method '{$method}' not found");
         }
         

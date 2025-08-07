@@ -69,7 +69,7 @@ final class CompressionManager
      */
     public function descomprimir(array $dadosComprimidos): mixed
     {
-        if (!$dadosComprimidos['comprimido']) {
+        if (! $dadosComprimidos['comprimido']) {
             return unserialize($dadosComprimidos['dados']);
         }
         
@@ -92,7 +92,7 @@ final class CompressionManager
      */
     public function comprimirArquivoEstatico(string $caminhoArquivo): array
     {
-        if (!file_exists($caminhoArquivo)) {
+        if (! file_exists($caminhoArquivo)) {
             throw new \InvalidArgumentException("Arquivo não encontrado: {$caminhoArquivo}");
         }
         
@@ -188,7 +188,7 @@ final class CompressionManager
     {
         $caminhoCache = $this->gerarCaminhoCache($chave);
         
-        if (!file_exists($caminhoCache)) {
+        if (! file_exists($caminhoCache)) {
             return null;
         }
         
@@ -261,7 +261,7 @@ final class CompressionManager
     {
         $diretorioCache = sys_get_temp_dir() . '/erp_compressed_cache/';
         
-        if (!is_dir($diretorioCache)) {
+        if (! is_dir($diretorioCache)) {
             return 0;
         }
         
@@ -381,7 +381,7 @@ final class CompressionManager
     {
         $diretorioCache = sys_get_temp_dir() . '/erp_compressed_cache/';
         
-        if (!is_dir($diretorioCache)) {
+        if (! is_dir($diretorioCache)) {
             mkdir($diretorioCache, 0755, true);
         }
         

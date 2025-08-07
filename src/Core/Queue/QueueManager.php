@@ -136,7 +136,7 @@ final class QueueManager
         while ($this->running) {
             try {
                 // Health check do worker
-                if (!$this->isWorkerHealthy($workerId)) {
+                if (! $this->isWorkerHealthy($workerId)) {
                     $this->restartWorker($workerId);
                     continue;
                 }
@@ -144,7 +144,7 @@ final class QueueManager
                 // Buscar próximo job com prioridade
                 $jobData = $this->getNextJob($workerId);
                 
-                if (!$jobData) {
+                if (! $jobData) {
                     // Modo idle - verificar se deve hibernar
                     $this->handleIdleWorker($workerId);
                     continue;
@@ -177,7 +177,7 @@ final class QueueManager
         
         foreach ($queues as $queue) {
             // Verificar se worker pode processar desta fila
-            if (!$this->canWorkerProcessQueue($workerId, $queue)) {
+            if (! $this->canWorkerProcessQueue($workerId, $queue)) {
                 continue;
             }
             
@@ -217,7 +217,7 @@ final class QueueManager
         try {
             // Instanciar job class
             $jobClass = $jobData['class'];
-            if (!class_exists($jobClass)) {
+            if (! class_exists($jobClass)) {
                 throw new \RuntimeException("Job class not found: {$jobClass}");
             }
             
@@ -319,7 +319,7 @@ final class QueueManager
      */
     private function checkAutoScaling(string $queue): void
     {
-        if (!$this->config['auto_scaling']['enabled']) {
+        if (! $this->config['auto_scaling']['enabled']) {
             return;
         }
         

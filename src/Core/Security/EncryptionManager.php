@@ -69,7 +69,7 @@ final class EncryptionManager
         
         // Verificar integridade
         $expectedHmac = hash_hmac('sha256', $encrypted, $key, true);
-        if (!hash_equals($hmac, $expectedHmac)) {
+        if (! hash_equals($hmac, $expectedHmac)) {
             throw new EncryptionException('Integridade dos dados comprometida');
         }
         
@@ -143,7 +143,7 @@ final class EncryptionManager
             }
         }
         
-        if (!empty($rotationResults)) {
+        if (! empty($rotationResults)) {
             $this->saveKeys();
         }
         
@@ -182,7 +182,7 @@ final class EncryptionManager
      */
     public function restoreKeys(string $backupFile): array
     {
-        if (!file_exists($backupFile)) {
+        if (! file_exists($backupFile)) {
             throw new EncryptionException('Arquivo de backup não encontrado');
         }
         
@@ -285,7 +285,7 @@ final class EncryptionManager
     
     private function getEncryptionKey(string $level): string
     {
-        if (!isset($this->keys[$level])) {
+        if (! isset($this->keys[$level])) {
             throw new EncryptionException("Nível de criptografia '{$level}' não encontrado");
         }
         
@@ -350,7 +350,7 @@ final class EncryptionManager
         $encryptedKeys = $this->encryptWithMasterKey($this->keys, $masterKey);
         
         $dir = dirname($keysFile);
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             mkdir($dir, 0700, true);
         }
         
@@ -362,11 +362,11 @@ final class EncryptionManager
     {
         $masterKeyFile = $this->config['master_key_file'];
         
-        if (!file_exists($masterKeyFile)) {
+        if (! file_exists($masterKeyFile)) {
             $masterKey = random_bytes(32);
             
             $dir = dirname($masterKeyFile);
-            if (!is_dir($dir)) {
+            if (! is_dir($dir)) {
                 mkdir($dir, 0700, true);
             }
             
@@ -399,7 +399,7 @@ final class EncryptionManager
         $encrypted = substr($data, 48);
         
         $expectedHmac = hash_hmac('sha256', $encrypted, $masterKey, true);
-        if (!hash_equals($hmac, $expectedHmac)) {
+        if (! hash_equals($hmac, $expectedHmac)) {
             throw new EncryptionException('Integridade da chave mestre comprometida');
         }
         

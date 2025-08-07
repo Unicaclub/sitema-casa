@@ -78,7 +78,7 @@ abstract class ControladorBase
      */
     protected function autorizar(string $permissao): void
     {
-        if (!$this->auth->can($permissao)) {
+        if (! $this->auth->can($permissao)) {
             throw new \ERP\Core\Excecoes\ExcecaoAutorizacao("Permissões insuficientes: {$permissao}");
         }
     }
