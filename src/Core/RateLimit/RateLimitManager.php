@@ -49,7 +49,7 @@ final class RateLimitManager
         $this->updateBehaviorProfile($identifier, $endpoint, $result, $context);
         
         // Log e auditoria
-        if (!$result['allowed']) {
+        if (! $result['allowed']) {
             $this->handleRateLimitExceeded($identifier, $endpoint, $result, $context);
         }
         
@@ -113,13 +113,13 @@ final class RateLimitManager
     {
         $apiKeyInfo = $this->getAPIKeyInfo($apiKey);
         
-        if (!$apiKeyInfo || !$apiKeyInfo['active']) {
+        if (! $apiKeyInfo || ! $apiKeyInfo['active']) {
             return $this->createBlockedResponse('INVALID_API_KEY', 'Invalid or inactive API key');
         }
         
         // Verificar quota mensal/diária
         $quotaResult = $this->checkAPIQuota($apiKey, $apiKeyInfo);
-        if (!$quotaResult['allowed']) {
+        if (! $quotaResult['allowed']) {
             return $quotaResult;
         }
         

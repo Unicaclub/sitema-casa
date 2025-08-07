@@ -95,7 +95,7 @@ final class QueueController
             $payload = json_decode($request->getBody(), true);
             
             // Validar payload
-            if (!isset($payload['job_class']) || !isset($payload['data'])) {
+            if (! isset($payload['job_class']) || ! isset($payload['data'])) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Missing required fields: job_class, data'
@@ -109,7 +109,7 @@ final class QueueController
             $jobData = $payload['data'];
             $tenantId = $payload['tenant_id'] ?? 'default';
             
-            if (!class_exists($jobClass)) {
+            if (! class_exists($jobClass)) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => "Job class not found: {$jobClass}"
@@ -174,7 +174,7 @@ final class QueueController
         try {
             $jobId = $request->getParameter('id');
             
-            if (!$jobId) {
+            if (! $jobId) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Job ID is required'
@@ -186,7 +186,7 @@ final class QueueController
             // Buscar status do job (implementação simulada)
             $jobStatus = $this->getJobStatusFromRedis($jobId);
             
-            if (!$jobStatus) {
+            if (! $jobStatus) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Job not found'
@@ -221,7 +221,7 @@ final class QueueController
         try {
             $jobId = $request->getParameter('id');
             
-            if (!$jobId) {
+            if (! $jobId) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Job ID is required'
@@ -233,7 +233,7 @@ final class QueueController
             // Cancelar job (implementação simulada)
             $cancelled = $this->cancelJobInRedis($jobId);
             
-            if (!$cancelled) {
+            if (! $cancelled) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Job not found or already processed'
@@ -272,7 +272,7 @@ final class QueueController
         try {
             $jobId = $request->getParameter('id');
             
-            if (!$jobId) {
+            if (! $jobId) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Job ID is required'
@@ -284,7 +284,7 @@ final class QueueController
             // Retry job (implementação simulada)
             $retried = $this->retryJobInRedis($jobId);
             
-            if (!$retried) {
+            if (! $retried) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Job not found or not in failed state'
@@ -350,7 +350,7 @@ final class QueueController
         try {
             $payload = json_decode($request->getBody(), true);
             
-            if (!isset($payload['action']) || !in_array($payload['action'], ['up', 'down'])) {
+            if (! isset($payload['action']) || ! in_array($payload['action'], ['up', 'down'])) {
                 return new Response(json_encode([
                     'status' => 'error',
                     'message' => 'Invalid action. Use "up" or "down"'

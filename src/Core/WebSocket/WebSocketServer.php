@@ -83,7 +83,7 @@ final class WebSocketServer
         // Criar socket
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         
-        if (!$socket) {
+        if (! $socket) {
             throw new \RuntimeException("Failed to create socket: " . socket_strerror(socket_last_error()));
         }
         
@@ -92,11 +92,11 @@ final class WebSocketServer
         socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
         
         // Bind e listen
-        if (!socket_bind($socket, $host, $port)) {
+        if (! socket_bind($socket, $host, $port)) {
             throw new \RuntimeException("Failed to bind socket: " . socket_strerror(socket_last_error()));
         }
         
-        if (!socket_listen($socket, $this->config['backlog'])) {
+        if (! socket_listen($socket, $this->config['backlog'])) {
             throw new \RuntimeException("Failed to listen on socket: " . socket_strerror(socket_last_error()));
         }
         
@@ -158,7 +158,7 @@ final class WebSocketServer
     {
         $clientSocket = socket_accept($serverSocket);
         
-        if (!$clientSocket) {
+        if (! $clientSocket) {
             echo "❌ Failed to accept connection: " . socket_strerror(socket_last_error()) . "\n";
             return;
         }
@@ -177,7 +177,7 @@ final class WebSocketServer
         // WebSocket handshake
         $request = socket_read($clientSocket, 2048);
         
-        if (!$this->performHandshake($clientSocket, $request, $clientIP)) {
+        if (! $this->performHandshake($clientSocket, $request, $clientIP)) {
             socket_close($clientSocket);
             return;
         }
@@ -232,7 +232,7 @@ final class WebSocketServer
         // Verificar headers obrigatórios
         $requiredHeaders = ['Upgrade', 'Connection', 'Sec-WebSocket-Key', 'Sec-WebSocket-Version'];
         foreach ($requiredHeaders as $header) {
-            if (!isset($headers[$header])) {
+            if (! isset($headers[$header])) {
                 echo "❌ Missing required header: {$header}\n";
                 return false;
             }
@@ -247,7 +247,7 @@ final class WebSocketServer
         }
         
         // Rate limiting por IP
-        if (!$this->checkIPRateLimit($clientIP)) {
+        if (! $this->checkIPRateLimit($clientIP)) {
             echo "⚠️ Rate limit exceeded for IP: {$clientIP}\n";
             return false;
         }
@@ -274,7 +274,7 @@ final class WebSocketServer
     private function handleSocketData($socket): void
     {
         $connectionId = $this->findConnectionBySocket($socket);
-        if (!$connectionId) {
+        if (! $connectionId) {
             return;
         }
         
@@ -291,7 +291,7 @@ final class WebSocketServer
         // Decode WebSocket frame
         $frame = $this->decodeFrame($data);
         
-        if (!$frame) {
+        if (! $frame) {
             echo "❌ Invalid frame from {$connectionId}\n";
             return;
         }
@@ -302,7 +302,7 @@ final class WebSocketServer
         $connection['last_ping'] = time();
         
         // Rate limiting
-        if (!$this->checkConnectionRateLimit($connectionId)) {
+        if (! $this->checkConnectionRateLimit($connectionId)) {
             $this->sendError($connectionId, 'RATE_LIMIT_EXCEEDED', 'Rate limit exceeded');
             return;
         }
@@ -342,7 +342,7 @@ final class WebSocketServer
         try {
             $message = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
             
-            if (!isset($message['type'])) {
+            if (! isset($message['type'])) {
                 $this->sendError($connectionId, 'INVALID_MESSAGE', 'Message type is required');
                 return;
             }
@@ -417,7 +417,7 @@ final class WebSocketServer
      */
     private function handleAuthentication(string $connectionId, array $message): void
     {
-        if (!isset($message['token'])) {
+        if (! isset($message['token'])) {
             $this->sendError($connectionId, 'AUTH_TOKEN_REQUIRED', 'Authentication token is required');
             return;
         }
@@ -425,7 +425,7 @@ final class WebSocketServer
         $token = $message['token'];
         $validation = $this->jwt->validateToken($token);
         
-        if (!$validation['valid']) {
+        if (! $validation['valid']) {
             $this->sendError($connectionId, 'AUTH_INVALID_TOKEN', 'Invalid authentication token');
             return;
         }
@@ -440,7 +440,7 @@ final class WebSocketServer
         $connection['tenant_id'] = $tenantId;
         
         // Adicionar aos usuários conectados
-        if (!isset($this->users[$userId])) {
+        if (! isset($this->users[$userId])) {
             $this->users[$userId] = [];
         }
         $this->users[$userId][] = $connectionId;
@@ -464,19 +464,19 @@ final class WebSocketServer
     {
         $connection = $this->connections[$connectionId];
         
-        if (!$connection['user_id']) {
+        if (! $connection['user_id']) {
             $this->sendError($connectionId, 'AUTH_REQUIRED', 'Authentication required to join channels');
             return;
         }
         
         $channel = $message['channel'] ?? null;
-        if (!$channel) {
+        if (! $channel) {
             $this->sendError($connectionId, 'CHANNEL_REQUIRED', 'Channel name is required');
             return;
         }
         
         // Verificar permissões
-        if (!$this->canJoinChannel($connection['user_id'], $connection['tenant_id'], $channel)) {
+        if (! $this->canJoinChannel($connection['user_id'], $connection['tenant_id'], $channel)) {
             $this->sendError($connectionId, 'CHANNEL_ACCESS_DENIED', 'Access denied to channel');
             return;
         }
@@ -516,7 +516,7 @@ final class WebSocketServer
     {
         $connection = $this->connections[$connectionId];
         
-        if (!$connection['user_id']) {
+        if (! $connection['user_id']) {
             $this->sendError($connectionId, 'AUTH_REQUIRED', 'Authentication required');
             return;
         }
@@ -524,13 +524,13 @@ final class WebSocketServer
         $channel = $message['channel'] ?? null;
         $content = $message['content'] ?? null;
         
-        if (!$channel || !$content) {
+        if (! $channel || ! $content) {
             $this->sendError($connectionId, 'INVALID_MESSAGE', 'Channel and content are required');
             return;
         }
         
         // Verificar se está no canal
-        if (!in_array($channel, $connection['channels'])) {
+        if (! in_array($channel, $connection['channels'])) {
             $this->sendError($connectionId, 'NOT_IN_CHANNEL', 'You are not a member of this channel');
             return;
         }
@@ -583,7 +583,7 @@ final class WebSocketServer
      */
     private function sendMessage(string $connectionId, array $message): bool
     {
-        if (!isset($this->connections[$connectionId])) {
+        if (! isset($this->connections[$connectionId])) {
             return false;
         }
         

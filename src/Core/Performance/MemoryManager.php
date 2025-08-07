@@ -48,7 +48,7 @@ final class MemoryManager
     {
         $chave = $classe . '_' . md5('');
         
-        if (!isset($this->poolObjetos[$chave])) {
+        if (! isset($this->poolObjetos[$chave])) {
             $this->poolObjetos[$chave] = [];
         }
         
@@ -110,7 +110,7 @@ final class MemoryManager
         static $cache = [];
         static $preloadQueue = [];
         
-        return function() use ($identificador, $carregador, &$cache, &$preloadQueue) {
+        return function () use ($identificador, $carregador, &$cache, &$preloadQueue) {
             // Verificar cache primeiro
             if (isset($cache[$identificador])) {
                 return $cache[$identificador];
@@ -286,7 +286,7 @@ final class MemoryManager
         $relacionados = $this->identificarDadosRelacionados($identificador);
         
         foreach ($relacionados as $relacionado) {
-            if (!isset($queue[$relacionado])) {
+            if (! isset($queue[$relacionado])) {
                 $queue[$relacionado] = time() + 5; // Preload em 5 segundos
             }
         }

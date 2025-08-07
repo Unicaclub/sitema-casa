@@ -46,7 +46,7 @@ final class ServicoPDV
             $cpf = $this->limparCpf($cpf_completo);
             
             // Validar CPF completo
-            if (!$this->validarCpf($cpf)) {
+            if (! $this->validarCpf($cpf)) {
                 return [
                     'sucesso' => false,
                     'erro' => 'CPF inválido'
@@ -91,7 +91,7 @@ final class ServicoPDV
             
             $cliente = $this->database->fetchRow($query, [$cpf, $id_evento]);
             
-            if (!$cliente) {
+            if (! $cliente) {
                 return [
                     'sucesso' => false,
                     'erro' => 'Cliente não tem acesso a este evento ou ingresso inválido'
@@ -155,7 +155,7 @@ final class ServicoPDV
                 $dados_venda['id_evento']
             );
             
-            if (!$autenticacao['sucesso']) {
+            if (! $autenticacao['sucesso']) {
                 throw new Exception($autenticacao['erro']);
             }
             
@@ -172,7 +172,7 @@ final class ServicoPDV
                     [$item['id_produto']]
                 );
                 
-                if (!$produto) {
+                if (! $produto) {
                     throw new Exception("Produto ID {$item['id_produto']} não encontrado");
                 }
                 
@@ -306,7 +306,7 @@ final class ServicoPDV
                 [$cpf]
             );
             
-            if (!$cliente) {
+            if (! $cliente) {
                 throw new Exception('Cliente não encontrado');
             }
             
@@ -316,7 +316,7 @@ final class ServicoPDV
                 [$cliente['id_cliente']]
             );
             
-            if (!$cartao) {
+            if (! $cartao) {
                 throw new Exception('Cartão não encontrado');
             }
             
@@ -402,7 +402,7 @@ final class ServicoPDV
             
             $cartao = $this->database->fetchRow($query, [$cpf]);
             
-            if (!$cartao) {
+            if (! $cartao) {
                 return [
                     'sucesso' => false,
                     'erro' => 'Cliente ou cartão não encontrado'
@@ -464,7 +464,7 @@ final class ServicoPDV
             $produtos_agrupados = [];
             foreach ($produtos as $produto) {
                 $categoria = $produto['categoria_produto'];
-                if (!isset($produtos_agrupados[$categoria])) {
+                if (! isset($produtos_agrupados[$categoria])) {
                     $produtos_agrupados[$categoria] = [];
                 }
                 $produtos_agrupados[$categoria][] = $produto;

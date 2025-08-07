@@ -321,19 +321,19 @@ final class JwtGuard implements GuardInterface
      */
     public function refreshToken(string $refreshToken): TokenPair
     {
-        if (!$this->validateToken($refreshToken)) {
+        if (! $this->validateToken($refreshToken)) {
             throw new AuthenticationException('Invalid refresh token');
         }
         
         $payload = $this->getTokenPayload($refreshToken);
         
-        if (!$payload || ($payload['type'] ?? '') !== 'refresh') {
+        if (! $payload || ($payload['type'] ?? '') !== 'refresh') {
             throw new AuthenticationException('Token is not a refresh token');
         }
         
         $user = $this->provider->retrieveById($payload['sub']);
         
-        if (!$user) {
+        if (! $user) {
             throw new AuthenticationException('User not found');
         }
         
@@ -444,7 +444,7 @@ final class JwtGuard implements GuardInterface
      */
     public function getUserFromToken(string $token): ?AuthenticatableInterface
     {
-        if (!$this->validateToken($token)) {
+        if (! $this->validateToken($token)) {
             return null;
         }
         

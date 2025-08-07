@@ -42,7 +42,7 @@ final class RateLimitMiddleware implements MiddlewareInterface
         
         // Verificar se alguma verificação falhou
         foreach ($rateLimitResults as $checkType => $result) {
-            if (!$result['allowed']) {
+            if (! $result['allowed']) {
                 return $this->createRateLimitResponse($result, $checkType);
             }
         }
@@ -209,7 +209,7 @@ final class RateLimitMiddleware implements MiddlewareInterface
     private function addRateLimitHeaders(Response $response, array $rateLimitResults): Response
     {
         foreach ($rateLimitResults as $type => $result) {
-            if (!$result['allowed']) continue;
+            if (! $result['allowed']) continue;
             
             $prefix = 'X-RateLimit-' . ucfirst($type);
             

@@ -32,7 +32,7 @@ final class ServicoEstoque
         
         // Verificar se produto existe
         $produto = $this->obterProdutoPorId($dados['produto_id'], $tenantId);
-        if (!$produto) {
+        if (! $produto) {
             throw new ExcecaoValidacao('Produto não encontrado');
         }
         
@@ -102,7 +102,7 @@ final class ServicoEstoque
     {
         $chaveCache = "alertas_estoque_{$tenantId}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId) {
             return $this->database->table('produtos')
                 ->select([
                     'id',
@@ -129,7 +129,7 @@ final class ServicoEstoque
     {
         $chaveCache = "produtos_mais_vendidos_{$tenantId}_{$limite}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId, $limite) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId, $limite) {
             return $this->database->table('vendas_itens')
                 ->join('produtos', 'vendas_itens.produto_id', '=', 'produtos.id')
                 ->join('vendas', 'vendas_itens.venda_id', '=', 'vendas.id')
@@ -160,7 +160,7 @@ final class ServicoEstoque
     {
         $chaveCache = "valorizacao_estoque_{$tenantId}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId) {
             $produtos = $this->database->table('produtos')
                 ->select([
                     'categoria',
@@ -189,7 +189,7 @@ final class ServicoEstoque
                 $relatorio['valor_venda_total'] += $valorVenda;
                 
                 // Agrupar por categoria
-                if (!isset($relatorio['por_categoria'][$produto->categoria])) {
+                if (! isset($relatorio['por_categoria'][$produto->categoria])) {
                     $relatorio['por_categoria'][$produto->categoria] = [
                         'valor_custo' => 0,
                         'valor_venda' => 0,
@@ -227,19 +227,19 @@ final class ServicoEstoque
             ->where('movimentacoes_estoque.tenant_id', $tenantId);
         
         // Aplicar filtros
-        if (!empty($filtros['produto_id'])) {
+        if (! empty($filtros['produto_id'])) {
             $query->where('movimentacoes_estoque.produto_id', $filtros['produto_id']);
         }
         
-        if (!empty($filtros['tipo'])) {
+        if (! empty($filtros['tipo'])) {
             $query->where('movimentacoes_estoque.tipo', $filtros['tipo']);
         }
         
-        if (!empty($filtros['data_inicio'])) {
+        if (! empty($filtros['data_inicio'])) {
             $query->where('movimentacoes_estoque.created_at', '>=', $filtros['data_inicio']);
         }
         
-        if (!empty($filtros['data_fim'])) {
+        if (! empty($filtros['data_fim'])) {
             $query->where('movimentacoes_estoque.created_at', '<=', $filtros['data_fim']);
         }
         
@@ -262,7 +262,7 @@ final class ServicoEstoque
             }
         }
         
-        if (!in_array($dados['tipo'], ['entrada', 'saida'])) {
+        if (! in_array($dados['tipo'], ['entrada', 'saida'])) {
             throw new ExcecaoValidacao('Tipo de movimentação deve ser "entrada" ou "saida"');
         }
         

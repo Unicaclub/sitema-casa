@@ -121,12 +121,12 @@ final class AlertManager
         }
         
         // Alerta mais frequente
-        if (!empty($trends['by_type'])) {
+        if (! empty($trends['by_type'])) {
             $trends['most_frequent'] = array_search(max($trends['by_type']), $trends['by_type']);
         }
         
         // Tempo médio de resolução
-        if (!empty($trends['resolution_times'])) {
+        if (! empty($trends['resolution_times'])) {
             $trends['avg_resolution_time'] = array_sum($trends['resolution_times']) / count($trends['resolution_times']);
         }
         
@@ -250,11 +250,11 @@ final class AlertManager
     
     private function evaluateRule(array $rule, array $metrics): ?array
     {
-        if (!is_callable($rule['condition'])) {
+        if (! is_callable($rule['condition'])) {
             return null;
         }
         
-        if (!$rule['condition']($metrics)) {
+        if (! $rule['condition']($metrics)) {
             return null;
         }
         

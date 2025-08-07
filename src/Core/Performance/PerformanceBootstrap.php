@@ -203,7 +203,7 @@ final class PerformanceBootstrap
     private function setupAutoHooks(): void
     {
         // Hook de shutdown para relatório final
-        register_shutdown_function(function() {
+        register_shutdown_function(function () {
             if ($this->config['auto_report'] ?? true) {
                 $this->generateShutdownReport();
             }
@@ -247,7 +247,7 @@ final class PerformanceBootstrap
         
         // Usar pcntl_alarm se disponível, senão ignore
         if (function_exists('pcntl_alarm')) {
-            pcntl_signal(SIGALRM, function() {
+            pcntl_signal(SIGALRM, function () {
                 $this->autoOptimize();
                 pcntl_alarm($this->config['auto_optimize_interval']);
             });
@@ -373,7 +373,7 @@ final class PerformanceBootstrap
     
     private function ensureInitialized(): void
     {
-        if (!$this->initialized) {
+        if (! $this->initialized) {
             throw new \RuntimeException('PerformanceBootstrap not initialized. Call initialize() first.');
         }
     }

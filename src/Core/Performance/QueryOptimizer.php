@@ -301,7 +301,7 @@ final class QueryOptimizer
     
     private function shouldCacheResult(string $query, array $context): bool
     {
-        if (!$this->config['enable_result_cache']) {
+        if (! $this->config['enable_result_cache']) {
             return false;
         }
         

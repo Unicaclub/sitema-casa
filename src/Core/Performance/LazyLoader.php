@@ -37,7 +37,7 @@ final class LazyLoader
     {
         $cacheKey = "{$type}:{$id}";
         
-        return function() use ($type, $id, $cacheKey, $options) {
+        return function () use ($type, $id, $cacheKey, $options) {
             // Verificar cache de dados já carregados
             if (isset($this->loadedData[$cacheKey])) {
                 $this->registrarAcesso($cacheKey);
@@ -74,7 +74,7 @@ final class LazyLoader
     {
         $cacheKey = "{$parentType}:{$parentId}:relation:{$relation}";
         
-        return function() use ($parentType, $parentId, $relation, $cacheKey) {
+        return function () use ($parentType, $parentId, $relation, $cacheKey) {
             if (isset($this->loadedData[$cacheKey])) {
                 return $this->loadedData[$cacheKey];
             }
@@ -102,7 +102,7 @@ final class LazyLoader
         $filterHash = md5(serialize($filters));
         $cacheKey = "{$type}:collection:{$filterHash}:page:{$page}:limit:{$limit}";
         
-        return function() use ($type, $filters, $page, $limit, $cacheKey) {
+        return function () use ($type, $filters, $page, $limit, $cacheKey) {
             if (isset($this->loadedData[$cacheKey])) {
                 return $this->loadedData[$cacheKey];
             }
@@ -134,7 +134,7 @@ final class LazyLoader
      */
     public function preloadStrategy(string $strategy, array $context = []): void
     {
-        if (!isset($this->preloadStrategies[$strategy])) {
+        if (! isset($this->preloadStrategies[$strategy])) {
             return;
         }
         
@@ -153,7 +153,7 @@ final class LazyLoader
      */
     public function preloadRelated(string $type, string|int $id): void
     {
-        if (!isset($this->relationshipMap[$type])) {
+        if (! isset($this->relationshipMap[$type])) {
             return;
         }
         
@@ -335,7 +335,7 @@ final class LazyLoader
     {
         $config = $this->relationshipMap[$parentType][$relation] ?? null;
         
-        if (!$config) {
+        if (! $config) {
             return [];
         }
         

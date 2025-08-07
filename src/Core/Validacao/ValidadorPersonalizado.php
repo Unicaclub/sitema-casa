@@ -38,7 +38,7 @@ final class ValidadorPersonalizado
             $this->validarCampo($campo, $valor, $regrasCampo, $dados);
         }
         
-        if (!empty($this->erros)) {
+        if (! empty($this->erros)) {
             throw new ExcecaoValidacao('Falha na validação dos dados', $this->erros);
         }
         
@@ -299,7 +299,7 @@ final class ValidadorPersonalizado
      */
     private function adicionarErro(string $campo, string $mensagem): void
     {
-        if (!isset($this->erros[$campo])) {
+        if (! isset($this->erros[$campo])) {
             $this->erros[$campo] = [];
         }
         

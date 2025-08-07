@@ -121,7 +121,7 @@ final class Response
             'timestamp' => date('c'),
         ];
         
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $payload['errors'] = $errors;
         }
         
@@ -171,7 +171,7 @@ final class Response
         string $name = null,
         array $headers = []
     ): self {
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             throw new \InvalidArgumentException("File not found: {$filePath}");
         }
         

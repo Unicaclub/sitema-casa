@@ -118,7 +118,7 @@ final class GerenciadorBackup
      */
     public function restaurarBackup(string $caminhoBackup, array $opcoes = []): array
     {
-        if (!file_exists($caminhoBackup)) {
+        if (! file_exists($caminhoBackup)) {
             throw new ExcecaoValidacao('Arquivo de backup não encontrado');
         }
         
@@ -132,7 +132,7 @@ final class GerenciadorBackup
             
             // Extrair e validar metadados
             $metadadosJson = $zip->getFromName('backup_metadata.json');
-            if (!$metadadosJson) {
+            if (! $metadadosJson) {
                 throw new ExcecaoValidacao('Backup inválido: metadados não encontrados');
             }
             
@@ -145,17 +145,17 @@ final class GerenciadorBackup
             $zip->close();
             
             // Restaurar banco de dados
-            if (!($opcoes['pular_banco'] ?? false)) {
+            if (! ($opcoes['pular_banco'] ?? false)) {
                 $this->restaurarBancoDados($diretorioTemp . '/database.sql', $metadados['tenant_id']);
             }
             
             // Restaurar arquivos de configuração
-            if (!($opcoes['pular_configuracoes'] ?? false)) {
+            if (! ($opcoes['pular_configuracoes'] ?? false)) {
                 $this->restaurarArquivosConfiguracao($diretorioTemp, $metadados['tenant_id']);
             }
             
             // Restaurar uploads
-            if (!($opcoes['pular_uploads'] ?? false)) {
+            if (! ($opcoes['pular_uploads'] ?? false)) {
                 $this->restaurarArquivosUploads($diretorioTemp, $metadados['tenant_id']);
             }
             
@@ -228,7 +228,7 @@ final class GerenciadorBackup
             ->where('id', $backupId)
             ->first();
         
-        if (!$backup) {
+        if (! $backup) {
             throw new ExcecaoValidacao('Backup não encontrado');
         }
         
@@ -349,7 +349,7 @@ final class GerenciadorBackup
      */
     private function garantirDiretorioBackup(): void
     {
-        if (!is_dir($this->diretorioBackups)) {
+        if (! is_dir($this->diretorioBackups)) {
             mkdir($this->diretorioBackups, 0755, true);
         }
     }

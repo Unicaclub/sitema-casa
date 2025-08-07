@@ -36,7 +36,7 @@ class APMAgent
      */
     public function startTransaction(string $name, string $type = 'request'): string
     {
-        if (!$this->enabled) {
+        if (! $this->enabled) {
             return '';
         }
         
@@ -70,7 +70,7 @@ class APMAgent
      */
     public function endTransaction(string $transactionId, array $result = []): void
     {
-        if (!$this->enabled || empty($this->transactionStack)) {
+        if (! $this->enabled || empty($this->transactionStack)) {
             return;
         }
         
@@ -107,7 +107,7 @@ class APMAgent
      */
     public function startSpan(string $name, string $type = 'custom'): string
     {
-        if (!$this->enabled || empty($this->transactionStack)) {
+        if (! $this->enabled || empty($this->transactionStack)) {
             return '';
         }
         
@@ -134,7 +134,7 @@ class APMAgent
      */
     public function endSpan(string $spanId, array $tags = []): void
     {
-        if (!$this->enabled || empty($this->transactionStack)) {
+        if (! $this->enabled || empty($this->transactionStack)) {
             return;
         }
         
@@ -155,7 +155,7 @@ class APMAgent
      */
     public function instrumentDatabaseQuery(string $query, array $params = []): callable
     {
-        return function() use ($query, $params) {
+        return function () use ($query, $params) {
             $spanId = $this->startSpan('db.query', 'db');
             
             $startTime = microtime(true);
@@ -194,7 +194,7 @@ class APMAgent
      */
     public function instrumentHttpRequest(string $url, string $method = 'GET'): callable
     {
-        return function() use ($url, $method) {
+        return function () use ($url, $method) {
             $spanId = $this->startSpan('http.request', 'http');
             
             try {
@@ -231,7 +231,7 @@ class APMAgent
      */
     public function instrumentCacheOperation(string $operation, string $key): callable
     {
-        return function() use ($operation, $key) {
+        return function () use ($operation, $key) {
             $spanId = $this->startSpan("cache.{$operation}", 'cache');
             
             try {
@@ -268,7 +268,7 @@ class APMAgent
      */
     public function recordError(\Throwable $error, array $context = []): void
     {
-        if (!$this->enabled) {
+        if (! $this->enabled) {
             return;
         }
         
@@ -286,7 +286,7 @@ class APMAgent
             'span_id' => $context['span_id'] ?? null
         ];
         
-        if (!empty($this->transactionStack)) {
+        if (! empty($this->transactionStack)) {
             $currentTransaction = &$this->transactionStack[count($this->transactionStack) - 1];
             $currentTransaction['errors'][] = $errorData;
         }
@@ -299,7 +299,7 @@ class APMAgent
      */
     public function addCustomData(string $key, mixed $value): void
     {
-        if (!$this->enabled || empty($this->transactionStack)) {
+        if (! $this->enabled || empty($this->transactionStack)) {
             return;
         }
         
@@ -385,7 +385,7 @@ class APMAgent
     {
         $baseline = $this->getPerformanceBaseline($transaction['name']);
         
-        if (!$baseline) {
+        if (! $baseline) {
             return false;
         }
         
@@ -457,7 +457,7 @@ class APMAgent
     public function handleShutdown(): void
     {
         // Finaliza transações pendentes
-        while (!empty($this->transactionStack)) {
+        while (! empty($this->transactionStack)) {
             $transaction = array_pop($this->transactionStack);
             $this->endTransaction($transaction['id']);
         }

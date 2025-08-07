@@ -51,7 +51,7 @@ final class AuthenticationService
             // Buscar usuário
             $user = $this->findUserByEmail($email);
             
-            if (!$user) {
+            if (! $user) {
                 $this->handleFailedLogin($email, 'user_not_found', $context);
                 return [
                     'success' => false,
@@ -72,7 +72,7 @@ final class AuthenticationService
             }
             
             // Verificar se conta está ativa
-            if (!$user['is_active']) {
+            if (! $user['is_active']) {
                 $this->handleFailedLogin($email, 'account_inactive', $context);
                 return [
                     'success' => false,
@@ -82,7 +82,7 @@ final class AuthenticationService
             }
             
             // Verificar senha
-            if (!$this->verifyPassword($password, $user['password'])) {
+            if (! $this->verifyPassword($password, $user['password'])) {
                 $this->handleFailedLogin($email, 'invalid_password', $context, $user['id']);
                 return [
                     'success' => false,
@@ -169,7 +169,7 @@ final class AuthenticationService
             // Validar refresh token
             $validation = $this->jwt->validateToken($refreshToken);
             
-            if (!$validation['valid']) {
+            if (! $validation['valid']) {
                 return [
                     'success' => false,
                     'error' => 'Invalid refresh token',
@@ -191,7 +191,7 @@ final class AuthenticationService
             // Verificar se refresh token existe no banco
             $storedToken = $this->findRefreshToken($refreshToken);
             
-            if (!$storedToken || !$storedToken['is_active']) {
+            if (! $storedToken || ! $storedToken['is_active']) {
                 return [
                     'success' => false,
                     'error' => 'Refresh token not found or inactive',
@@ -202,7 +202,7 @@ final class AuthenticationService
              // Buscar usuário
             $user = $this->findUserById($payload['user_id']);
             
-            if (!$user || !$user['is_active']) {
+            if (! $user || ! $user['is_active']) {
                 return [
                     'success' => false,
                     'error' => 'User not found or inactive',
@@ -312,7 +312,7 @@ final class AuthenticationService
         // Validar token
         $validation = $this->jwt->validateToken($token);
         
-        if (!$validation['valid']) {
+        if (! $validation['valid']) {
             return $validation;
         }
         
@@ -329,7 +329,7 @@ final class AuthenticationService
         // Verificar se usuário ainda existe e está ativo
         $user = $this->findUserById($payload['user_id']);
         
-        if (!$user || !$user['is_active']) {
+        if (! $user || ! $user['is_active']) {
             return [
                 'valid' => false,
                 'error' => 'User not found or inactive'
@@ -402,7 +402,7 @@ final class AuthenticationService
     
     private function isAccountLocked(array $user): bool
     {
-        if (!$user['locked_until']) {
+        if (! $user['locked_until']) {
             return false;
         }
         

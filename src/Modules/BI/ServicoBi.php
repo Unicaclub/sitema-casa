@@ -29,7 +29,7 @@ final class ServicoBi
     {
         $chaveCache = "dashboard_executivo_{$tenantId}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId) {
             $mesAtual = Carbon::now();
             $anoAtual = $mesAtual->year;
             
@@ -51,7 +51,7 @@ final class ServicoBi
     {
         $chaveCache = "analise_comparativa_{$tenantId}_{$periodo1Inicio->format('Ymd')}_{$periodo2Inicio->format('Ymd')}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId, $periodo1Inicio, $periodo1Fim, $periodo2Inicio, $periodo2Fim) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId, $periodo1Inicio, $periodo1Fim, $periodo2Inicio, $periodo2Fim) {
             // Vendas por período
             $vendasPeriodo1 = $this->obterMetricasVendasPeriodo($tenantId, $periodo1Inicio, $periodo1Fim);
             $vendasPeriodo2 = $this->obterMetricasVendasPeriodo($tenantId, $periodo2Inicio, $periodo2Fim);
@@ -102,7 +102,7 @@ final class ServicoBi
     {
         $chaveCache = "analise_cohort_{$tenantId}_{$mesesRetroativos}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId, $mesesRetroativos) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId, $mesesRetroativos) {
             $dataInicio = Carbon::now()->subMonths($mesesRetroativos)->startOfMonth();
             
             // Obter clientes por mês de primeira compra
@@ -177,7 +177,7 @@ final class ServicoBi
     {
         $chaveCache = "previsao_vendas_{$tenantId}_{$mesesHistorico}_{$mesesPrevisao}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId, $mesesHistorico, $mesesPrevisao) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId, $mesesHistorico, $mesesPrevisao) {
             // Obter dados históricos
             $dadosHistoricos = $this->database->table('vendas')
                 ->selectRaw('DATE_FORMAT(data_venda, "%Y-%m") as mes, SUM(valor_total) as receita, COUNT(*) as quantidade')

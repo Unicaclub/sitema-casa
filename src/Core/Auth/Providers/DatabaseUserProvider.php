@@ -255,7 +255,7 @@ final class DatabaseUserProvider implements UserProviderInterface
             ->where('active', true)
             ->first();
         
-        if (!$role) {
+        if (! $role) {
             return false;
         }
         
@@ -291,7 +291,7 @@ final class DatabaseUserProvider implements UserProviderInterface
             ->where('name', $roleName)
             ->first();
         
-        if (!$role) {
+        if (! $role) {
             return false;
         }
         

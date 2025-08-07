@@ -142,7 +142,7 @@ final class IDSManager
         foreach ($hunting['hunting_rules'] as $rule) {
             $findings = $this->executeHuntingRule($rule);
             
-            if (!empty($findings)) {
+            if (! empty($findings)) {
                 $hunting['findings'][] = [
                     'rule' => $rule,
                     'findings' => $findings,

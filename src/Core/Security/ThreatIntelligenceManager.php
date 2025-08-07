@@ -36,7 +36,7 @@ final class ThreatIntelligenceManager
         $this->config = array_merge($this->getDefaultConfig(), $config);
         
         // Initialize VirusTotal client if API key is provided
-        if (!empty($this->config['virustotal_api_key'])) {
+        if (! empty($this->config['virustotal_api_key'])) {
             $this->virusTotalClient = new VirusTotalClient($this->config['virustotal_api_key']);
         }
         
@@ -65,7 +65,7 @@ final class ThreatIntelligenceManager
         
         // Coletar de cada feed de threat intelligence
         foreach ($this->threatFeeds as $feedName => $feedConfig) {
-            if (!$feedConfig['enabled']) {
+            if (! $feedConfig['enabled']) {
                 continue;
             }
             
@@ -145,7 +145,7 @@ final class ThreatIntelligenceManager
             
             $totalMatches = array_merge($systemMatches, $networkMatches, $dnsMatches, $endpointMatches);
             
-            if (!empty($totalMatches)) {
+            if (! empty($totalMatches)) {
                 $analysis['matches_found'][$iocId] = [
                     'ioc' => $ioc,
                     'matches' => $totalMatches,
@@ -193,7 +193,7 @@ final class ThreatIntelligenceManager
                 
                 // Categorizar por fase de ataque
                 $phase = $mitreMapping['tactic'] ?? 'unknown';
-                if (!isset($mapping['attack_phases'][$phase])) {
+                if (! isset($mapping['attack_phases'][$phase])) {
                     $mapping['attack_phases'][$phase] = [];
                 }
                 $mapping['attack_phases'][$phase][] = $mitreMapping;

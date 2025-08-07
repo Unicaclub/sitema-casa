@@ -107,12 +107,12 @@ class AssetOptimizer
      */
     public function optimizeImage(string $imagePath, array $options = []): string
     {
-        if (!$this->config['compress_images']) {
+        if (! $this->config['compress_images']) {
             return $imagePath;
         }
         
         $fullPath = $this->publicPath . '/' . ltrim($imagePath, '/');
-        if (!file_exists($fullPath)) {
+        if (! file_exists($fullPath)) {
             return $imagePath;
         }
         
@@ -134,7 +134,7 @@ class AssetOptimizer
      */
     public function generateManifest(): void
     {
-        if (!$this->config['cache_busting']) {
+        if (! $this->config['cache_busting']) {
             return;
         }
         
@@ -231,7 +231,7 @@ class AssetOptimizer
             '/url\s*\(\s*["\']?([^"\')]+)["\']?\s*\)/',
             function ($matches) use ($basePath) {
                 $url = $matches[1];
-                if (!str_starts_with($url, 'http') && !str_starts_with($url, '//') && !str_starts_with($url, '/')) {
+                if (! str_starts_with($url, 'http') && ! str_starts_with($url, '//') && ! str_starts_with($url, '/')) {
                     $url = $basePath . '/' . $url;
                 }
                 return 'url("' . $url . '")';
@@ -248,7 +248,7 @@ class AssetOptimizer
         $quality = $options['quality'] ?? 85;
         $info = getimagesize($source);
         
-        if (!$info) {
+        if (! $info) {
             return false;
         }
         
@@ -271,7 +271,7 @@ class AssetOptimizer
                 break;
         }
         
-        if (!$image) {
+        if (! $image) {
             return false;
         }
         
@@ -318,7 +318,7 @@ class AssetOptimizer
         // Manter proporção
         if (isset($options['width']) && !isset($options['height'])) {
             $newHeight = ($originalHeight * $newWidth) / $originalWidth;
-        } elseif (!isset($options['width']) && isset($options['height'])) {
+        } elseif (! isset($options['width']) && isset($options['height'])) {
             $newWidth = ($originalWidth * $newHeight) / $originalHeight;
         }
         
@@ -342,7 +342,7 @@ class AssetOptimizer
      */
     private function needsRebuild(array $sourceFiles, string $cacheFile): bool
     {
-        if (!file_exists($cacheFile)) {
+        if (! file_exists($cacheFile)) {
             return true;
         }
         
@@ -377,7 +377,7 @@ class AssetOptimizer
      */
     private function ensureCacheDirectory(): void
     {
-        if (!is_dir($this->cachePath)) {
+        if (! is_dir($this->cachePath)) {
             mkdir($this->cachePath, 0755, true);
         }
     }

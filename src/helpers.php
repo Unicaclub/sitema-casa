@@ -4,7 +4,7 @@
  * Funções Helper do Sistema ERP
  */
 
-if (!function_exists('app')) {
+if (! function_exists('app')) {
     /**
      * Obtém instância da aplicação
      */
@@ -20,7 +20,7 @@ if (!function_exists('app')) {
     }
 }
 
-if (!function_exists('config')) {
+if (! function_exists('config')) {
     /**
      * Obtém configuração
      */
@@ -30,7 +30,7 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('env')) {
+if (! function_exists('env')) {
     /**
      * Obtém variável de ambiente
      */
@@ -60,7 +60,7 @@ if (!function_exists('env')) {
     }
 }
 
-if (!function_exists('auth')) {
+if (! function_exists('auth')) {
     /**
      * Obtém instância de autenticação
      */
@@ -70,7 +70,7 @@ if (!function_exists('auth')) {
     }
 }
 
-if (!function_exists('cache')) {
+if (! function_exists('cache')) {
     /**
      * Obtém instância de cache
      */
@@ -80,7 +80,7 @@ if (!function_exists('cache')) {
     }
 }
 
-if (!function_exists('db')) {
+if (! function_exists('db')) {
     /**
      * Obtém instância do banco
      */
@@ -90,7 +90,7 @@ if (!function_exists('db')) {
     }
 }
 
-if (!function_exists('logger')) {
+if (! function_exists('logger')) {
     /**
      * Obtém instância do logger
      */
@@ -100,7 +100,7 @@ if (!function_exists('logger')) {
     }
 }
 
-if (!function_exists('events')) {
+if (! function_exists('events')) {
     /**
      * Obtém instância do event bus
      */
@@ -110,7 +110,7 @@ if (!function_exists('events')) {
     }
 }
 
-if (!function_exists('response')) {
+if (! function_exists('response')) {
     /**
      * Cria resposta JSON
      */
@@ -120,7 +120,7 @@ if (!function_exists('response')) {
     }
 }
 
-if (!function_exists('json_response')) {
+if (! function_exists('json_response')) {
     /**
      * Resposta JSON de sucesso
      */
@@ -134,7 +134,7 @@ if (!function_exists('json_response')) {
     }
 }
 
-if (!function_exists('error_response')) {
+if (! function_exists('error_response')) {
     /**
      * Resposta JSON de erro
      */
@@ -153,7 +153,7 @@ if (!function_exists('error_response')) {
     }
 }
 
-if (!function_exists('money_format')) {
+if (! function_exists('money_format')) {
     /**
      * Formata valor monetário
      */
@@ -172,7 +172,7 @@ if (!function_exists('money_format')) {
     }
 }
 
-if (!function_exists('format_document')) {
+if (! function_exists('format_document')) {
     /**
      * Formata documento (CPF/CNPJ)
      */
@@ -192,7 +192,7 @@ if (!function_exists('format_document')) {
     }
 }
 
-if (!function_exists('format_phone')) {
+if (! function_exists('format_phone')) {
     /**
      * Formata telefone
      */
@@ -212,7 +212,7 @@ if (!function_exists('format_phone')) {
     }
 }
 
-if (!function_exists('slug')) {
+if (! function_exists('slug')) {
     /**
      * Gera slug de string
      */
@@ -225,7 +225,7 @@ if (!function_exists('slug')) {
     }
 }
 
-if (!function_exists('sanitize_filename')) {
+if (! function_exists('sanitize_filename')) {
     /**
      * Sanitiza nome de arquivo
      */
@@ -236,7 +236,7 @@ if (!function_exists('sanitize_filename')) {
     }
 }
 
-if (!function_exists('generate_uuid')) {
+if (! function_exists('generate_uuid')) {
     /**
      * Gera UUID v4
      */
@@ -250,7 +250,7 @@ if (!function_exists('generate_uuid')) {
     }
 }
 
-if (!function_exists('human_file_size')) {
+if (! function_exists('human_file_size')) {
     /**
      * Converte bytes para formato legível
      */
@@ -263,7 +263,7 @@ if (!function_exists('human_file_size')) {
     }
 }
 
-if (!function_exists('time_ago')) {
+if (! function_exists('time_ago')) {
     /**
      * Calcula tempo relativo
      */
@@ -291,7 +291,7 @@ if (!function_exists('time_ago')) {
     }
 }
 
-if (!function_exists('validate_document')) {
+if (! function_exists('validate_document')) {
     /**
      * Valida CPF/CNPJ
      */

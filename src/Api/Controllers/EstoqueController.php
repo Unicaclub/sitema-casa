@@ -88,7 +88,7 @@ final class EstoqueController extends ControladorBase
         
         $productData = $product->first();
         
-        if (!$productData) {
+        if (! $productData) {
             return $this->error('Produto não encontrado', 404);
         }
         
@@ -210,7 +210,7 @@ final class EstoqueController extends ControladorBase
         
         $this->applyTenantFilter($product);
         
-        if (!$product->exists()) {
+        if (! $product->exists()) {
             return $this->error('Produto não encontrado', 404);
         }
         
@@ -257,7 +257,7 @@ final class EstoqueController extends ControladorBase
         
         $this->applyTenantFilter($product);
         
-        if (!$product->exists()) {
+        if (! $product->exists()) {
             return $this->error('Produto não encontrado', 404);
         }
         
@@ -375,7 +375,7 @@ final class EstoqueController extends ControladorBase
         
         $productData = $product->first();
         
-        if (!$productData) {
+        if (! $productData) {
             return $this->error('Produto não encontrado', 404);
         }
         
@@ -487,7 +487,7 @@ final class EstoqueController extends ControladorBase
     {
         $this->authorize('estoque.view');
         
-        return $this->cached('inventory_valuation', function() {
+        return $this->cached('inventory_valuation', function () {
             $query = $this->database->table('produtos')
                 ->select([
                     'categoria_id',

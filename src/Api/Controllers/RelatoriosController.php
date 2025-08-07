@@ -91,7 +91,7 @@ final class RelatoriosController extends BaseController
         
         $periodo = $request->query('periodo', '30');
         
-        return $this->cached("dashboard_bi_{$periodo}", function() use ($periodo) {
+        return $this->cached("dashboard_bi_{$periodo}", function () use ($periodo) {
             $dataInicio = Carbon::now()->subDays((int)$periodo)->startOfDay();
             
             return [

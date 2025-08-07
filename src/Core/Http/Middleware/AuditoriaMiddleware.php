@@ -244,7 +244,7 @@ final class AuditoriaMiddleware implements MiddlewareInterface
         }
         
         // Risco por origem suspeita (pode ser expandido)
-        if (!$dados['usuario_id']) {
+        if (! $dados['usuario_id']) {
             $pontuacaoRisco += 10;
         }
         

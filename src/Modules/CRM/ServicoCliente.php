@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace ERP\Modules\CRM;
 
-use ERP\Core\Database\DatabaseManager;
-use ERP\Core\Cache\CacheInterface;
-use ERP\Core\Excecoes\ExcecaoValidacao;
-use Core\MultiTenant\TenantManager;
 use Core\Logger;
+use Core\MultiTenant\TenantManager;
+use ERP\Core\Cache\CacheInterface;
+use ERP\Core\Database\DatabaseManager;
+use ERP\Core\Excecoes\ExcecaoValidacao;
 
 /**
  * Serviço de Gestão de Clientes
- * 
+ *
  * Lógica de negócio para operações com clientes
- * 
+ *
  * @package ERP\Modules\CRM
  */
 final class ServicoCliente
@@ -23,7 +23,7 @@ final class ServicoCliente
         private DatabaseManager $database,
         private CacheInterface $cache,
         private TenantManager $tenantManager,
-        private Logger $logger
+        private Logger $logger,
     ) {}
     
     /**
@@ -32,8 +32,8 @@ final class ServicoCliente
     public function criarCliente(array $dados, ?int $tenantId = null): array
     {
         $tenantId = $tenantId ?? $this->tenantManager->getCurrentTenantId();
-        
-        if (!$tenantId) {
+
+        if (! $tenantId) {
             throw new ExcecaoValidacao('Tenant não definido');
         }
         
@@ -76,7 +76,7 @@ final class ServicoCliente
     {
         // Verificar se cliente existe
         $cliente = $this->obterClientePorId($clienteId, $tenantId);
-        if (!$cliente) {
+        if (! $cliente) {
             throw new ExcecaoValidacao('Cliente não encontrado');
         }
         
@@ -111,7 +111,7 @@ final class ServicoCliente
     {
         $chaveCache = "estatisticas_clientes_{$tenantId}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId) {
             $totalClientes = $this->database->table('clientes')
                 ->where('tenant_id', $tenantId)
                 ->count();
@@ -154,7 +154,7 @@ final class ServicoCliente
                 'valor_total',
                 'status',
                 'data_venda',
-                'created_at'
+                'created_at',
             ])
             ->where('cliente_id', $clienteId)
             ->where('tenant_id', $tenantId)
@@ -173,28 +173,28 @@ final class ServicoCliente
             ->where('tenant_id', $tenantId);
         
         // Aplicar filtros
-        if (!empty($filtros['termo_busca'])) {
+        if (! empty($filtros['termo_busca'])) {
             $termo = $filtros['termo_busca'];
-            $query->where(function($q) use ($termo) {
+            $query->where(function ($q) use ($termo) {
                 $q->where('nome', 'LIKE', "%{$termo}%")
                   ->orWhere('email', 'LIKE', "%{$termo}%")
                   ->orWhere('documento', 'LIKE', "%{$termo}%");
             });
         }
-        
-        if (!empty($filtros['status'])) {
+
+        if (! empty($filtros['status'])) {
             $query->where('status', $filtros['status']);
         }
-        
-        if (!empty($filtros['tipo_pessoa'])) {
+
+        if (! empty($filtros['tipo_pessoa'])) {
             $query->where('tipo_pessoa', $filtros['tipo_pessoa']);
         }
-        
-        if (!empty($filtros['data_inicio'])) {
+
+        if (! empty($filtros['data_inicio'])) {
             $query->where('created_at', '>=', $filtros['data_inicio']);
         }
-        
-        if (!empty($filtros['data_fim'])) {
+
+        if (! empty($filtros['data_fim'])) {
             $query->where('created_at', '<=', $filtros['data_fim']);
         }
         
@@ -215,12 +215,12 @@ final class ServicoCliente
         }
         
         // Validar email
-        if (!filter_var($dados['email'], FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($dados['email'], FILTER_VALIDATE_EMAIL)) {
             throw new ExcecaoValidacao('Email inválido');
         }
         
         // Validar documento se fornecido
-        if (!empty($dados['documento'])) {
+        if (! empty($dados['documento'])) {
             $documento = preg_replace('/[^0-9]/', '', $dados['documento']);
             if (strlen($documento) !== 11 && strlen($documento) !== 14) {
                 throw new ExcecaoValidacao('Documento deve ser CPF ou CNPJ válido');

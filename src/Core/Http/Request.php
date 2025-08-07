@@ -206,7 +206,7 @@ final class Request
     {
         if (is_array($key)) {
             foreach ($key as $k) {
-                if (!$this->has($k)) {
+                if (! $this->has($k)) {
                     return false;
                 }
             }
@@ -224,7 +224,7 @@ final class Request
     {
         if (is_array($key)) {
             foreach ($key as $k) {
-                if (!$this->filled($k)) {
+                if (! $this->filled($k)) {
                     return false;
                 }
             }
@@ -281,7 +281,7 @@ final class Request
      */
     public function file(string $key): ?UploadedFile
     {
-        if (!isset($this->files[$key])) {
+        if (! isset($this->files[$key])) {
             return null;
         }
         
@@ -353,7 +353,7 @@ final class Request
         ];
         
         foreach ($ipKeys as $key) {
-            if (!empty($this->server[$key])) {
+            if (! empty($this->server[$key])) {
                 $ips = explode(',', $this->server[$key]);
                 $ip = trim($ips[0]);
                 

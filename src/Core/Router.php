@@ -122,7 +122,7 @@ class Router
         // Encontra rota correspondente
         $route = $this->findRoute($method, $path);
         
-        if (!$route) {
+        if (! $route) {
             return new Response(['error' => 'Route not found'], 404);
         }
         

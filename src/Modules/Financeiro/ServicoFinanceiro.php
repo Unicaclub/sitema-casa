@@ -30,7 +30,7 @@ final class ServicoFinanceiro
     {
         $chaveCache = "fluxo_caixa_projetado_{$tenantId}_{$diasProjecao}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId, $diasProjecao) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId, $diasProjecao) {
             $dataInicio = Carbon::now()->startOfDay();
             $dataFim = $dataInicio->copy()->addDays($diasProjecao);
             
@@ -97,7 +97,7 @@ final class ServicoFinanceiro
     {
         $chaveCache = "dre_{$tenantId}_{$dataInicio->format('Y-m-d')}_{$dataFim->format('Y-m-d')}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId, $dataInicio, $dataFim) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId, $dataInicio, $dataFim) {
             // Receitas Operacionais
             $receitaBruta = $this->database->table('vendas')
                 ->where('tenant_id', $tenantId)
@@ -242,7 +242,7 @@ final class ServicoFinanceiro
     {
         $chaveCache = "indicadores_financeiros_{$tenantId}";
         
-        return $this->cache->remember($chaveCache, function() use ($tenantId) {
+        return $this->cache->remember($chaveCache, function () use ($tenantId) {
             $mesAtual = Carbon::now();
             $mesAnterior = $mesAtual->copy()->subMonth();
             

@@ -69,7 +69,7 @@ final class CacheAvancado implements CacheInterface
         };
         
         // Armazenar tags para limpeza posterior
-        if (!empty($this->tags)) {
+        if (! empty($this->tags)) {
             $this->armazenarTags($chave, $this->tags);
             $this->tags = [];
         }
@@ -204,7 +204,7 @@ final class CacheAvancado implements CacheInterface
         $sucesso = true;
         
         foreach ($valores as $chave => $valor) {
-            if (!$this->put($chave, $valor, $ttl)) {
+            if (! $this->put($chave, $valor, $ttl)) {
                 $sucesso = false;
             }
         }
@@ -235,7 +235,7 @@ final class CacheAvancado implements CacheInterface
         
         $sucesso = true;
         foreach (array_unique($chaves) as $chave) {
-            if (!$this->forget($chave)) {
+            if (! $this->forget($chave)) {
                 $sucesso = false;
             }
         }
@@ -334,7 +334,7 @@ final class CacheAvancado implements CacheInterface
             $chaveTag = $this->prefixo . 'tags:' . $tag;
             $chavesExistentes = $this->get($chaveTag, []);
             
-            if (!in_array($chave, $chavesExistentes)) {
+            if (! in_array($chave, $chavesExistentes)) {
                 $chavesExistentes[] = $chave;
                 $this->put($chaveTag, $chavesExistentes, 86400); // 24 horas
             }
@@ -378,7 +378,7 @@ final class CacheAvancado implements CacheInterface
     private function inicializarDriverArquivo(): string
     {
         $diretorio = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'erp_cache';
-        if (!is_dir($diretorio)) {
+        if (! is_dir($diretorio)) {
             mkdir($diretorio, 0755, true);
         }
         return $diretorio;
@@ -393,7 +393,7 @@ final class CacheAvancado implements CacheInterface
     private function lerArquivo(string $chave): ?array
     {
         $arquivo = $this->driver . DIRECTORY_SEPARATOR . md5($chave) . '.cache';
-        if (!file_exists($arquivo)) {
+        if (! file_exists($arquivo)) {
             return null;
         }
         

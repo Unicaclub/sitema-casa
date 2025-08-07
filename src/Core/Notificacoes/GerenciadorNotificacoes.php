@@ -105,7 +105,7 @@ final class GerenciadorNotificacoes
     {
         $chaveCache = "notificacoes:nao_lidas:{$usuarioId}";
         
-        return $this->cache->remember($chaveCache, function() use ($usuarioId, $limite) {
+        return $this->cache->remember($chaveCache, function () use ($usuarioId, $limite) {
             return $this->database->table('notificacoes')
                 ->where('usuario_id', $usuarioId)
                 ->where('lida', false)
@@ -123,7 +123,7 @@ final class GerenciadorNotificacoes
     {
         $chaveCache = "notificacoes:contador:{$usuarioId}";
         
-        return $this->cache->remember($chaveCache, function() use ($usuarioId) {
+        return $this->cache->remember($chaveCache, function () use ($usuarioId) {
             return $this->database->table('notificacoes')
                 ->where('usuario_id', $usuarioId)
                 ->where('lida', false)
@@ -231,7 +231,7 @@ final class GerenciadorNotificacoes
      */
     public function adicionarOuvinte(string $evento, callable $callback): void
     {
-        if (!isset($this->ouvintes[$evento])) {
+        if (! isset($this->ouvintes[$evento])) {
             $this->ouvintes[$evento] = [];
         }
         

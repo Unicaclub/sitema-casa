@@ -225,7 +225,7 @@ class SystemIntegrator
         $conflicts = $this->identifyStateConflicts($currentStates);
         
         // Resolve conflitos usando IA
-        if (!empty($conflicts)) {
+        if (! empty($conflicts)) {
             $syncResults['conflicts_resolved'] = $this->resolveStateConflicts($conflicts);
         }
         

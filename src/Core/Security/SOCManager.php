@@ -139,7 +139,7 @@ final class SOCManager
         $orchestrationId = uniqid('soar_');
         
         $incident = $this->incidents[$incidentId] ?? null;
-        if (!$incident) {
+        if (! $incident) {
             throw new \RuntimeException("Incident not found: {$incidentId}");
         }
         

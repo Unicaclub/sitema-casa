@@ -29,7 +29,7 @@ final class FinanceiroController extends BaseController
         $dataInicio = Carbon::now()->subDays((int)$periodo)->startOfDay();
         $dataFim = Carbon::now()->endOfDay();
         
-        return $this->cached("fluxo_caixa_{$periodo}", function() use ($dataInicio, $dataFim) {
+        return $this->cached("fluxo_caixa_{$periodo}", function () use ($dataInicio, $dataFim) {
             // Receitas
             $receitas = $this->database->table('financeiro_transacoes')
                 ->where('tipo', 'receita')
@@ -163,7 +163,7 @@ final class FinanceiroController extends BaseController
         
         $this->aplicarFiltroTenant($categoria);
         
-        if (!$categoria->exists()) {
+        if (! $categoria->exists()) {
             return $this->erro('Categoria não encontrada', 404);
         }
         
@@ -219,7 +219,7 @@ final class FinanceiroController extends BaseController
         
         $transacaoExistente = $transacao->first();
         
-        if (!$transacaoExistente) {
+        if (! $transacaoExistente) {
             return $this->erro('Transação não encontrada', 404);
         }
         
@@ -263,7 +263,7 @@ final class FinanceiroController extends BaseController
         
         $this->aplicarFiltroTenant($transacao);
         
-        if (!$transacao->exists()) {
+        if (! $transacao->exists()) {
             return $this->erro('Transação não encontrada', 404);
         }
         
@@ -359,7 +359,7 @@ final class FinanceiroController extends BaseController
         $dataInicio = $request->query('data_inicio', Carbon::now()->startOfMonth()->toDateString());
         $dataFim = $request->query('data_fim', Carbon::now()->endOfMonth()->toDateString());
         
-        return $this->cached("dre_{$dataInicio}_{$dataFim}", function() use ($dataInicio, $dataFim) {
+        return $this->cached("dre_{$dataInicio}_{$dataFim}", function () use ($dataInicio, $dataFim) {
             $query = $this->database->table('financeiro_transacoes')
                 ->join('financeiro_categorias', 'financeiro_transacoes.categoria_id', '=', 'financeiro_categorias.id')
                 ->where('financeiro_transacoes.status', 'pago')

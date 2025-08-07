@@ -163,7 +163,7 @@ final class SupremoEncryptionEngine
             base64_decode($encryptedPackage['aad'])
         );
         
-        if (!hash_equals($expectedHash, $encryptedPackage['integrity_hash'])) {
+        if (! hash_equals($expectedHash, $encryptedPackage['integrity_hash'])) {
             $this->encryptionStats['failed_attempts']++;
             throw new \RuntimeException('Integrity verification failed - possible tampering detected');
         }
@@ -269,7 +269,7 @@ final class SupremoEncryptionEngine
         // Generate key pair
         $keyPair = openssl_pkey_new($config);
         
-        if (!$keyPair) {
+        if (! $keyPair) {
             throw new \RuntimeException('RSA key pair generation failed');
         }
         
@@ -309,7 +309,7 @@ final class SupremoEncryptionEngine
         
         $keyPair = openssl_pkey_new($config);
         
-        if (!$keyPair) {
+        if (! $keyPair) {
             throw new \RuntimeException('ECDH key pair generation failed');
         }
         
@@ -349,7 +349,7 @@ final class SupremoEncryptionEngine
             'threads' => $threads
         ]);
         
-        if (!$hash) {
+        if (! $hash) {
             throw new \RuntimeException('Argon2id hashing failed');
         }
         
@@ -392,7 +392,7 @@ final class SupremoEncryptionEngine
             true
         );
         
-        if (!$derivedKey) {
+        if (! $derivedKey) {
             throw new \RuntimeException('PBKDF2 key derivation failed');
         }
         

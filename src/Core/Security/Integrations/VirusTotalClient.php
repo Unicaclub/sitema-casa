@@ -33,7 +33,7 @@ final class VirusTotalClient
         $endpoint = "/ip_addresses/{$ip}";
         $response = $this->makeRequest('GET', $endpoint);
         
-        if (!$response['success']) {
+        if (! $response['success']) {
             return [
                 'success' => false,
                 'error' => $response['error'],
@@ -80,7 +80,7 @@ final class VirusTotalClient
         $endpoint = "/domains/{$domain}";
         $response = $this->makeRequest('GET', $endpoint);
         
-        if (!$response['success']) {
+        if (! $response['success']) {
             return [
                 'success' => false,
                 'error' => $response['error'],
@@ -131,7 +131,7 @@ final class VirusTotalClient
         $endpoint = "/urls/{$urlId}";
         $response = $this->makeRequest('GET', $endpoint);
         
-        if (!$response['success']) {
+        if (! $response['success']) {
             // If URL not found, submit for analysis
             $submitResponse = $this->submitURL($url);
             if ($submitResponse['success']) {
@@ -190,7 +190,7 @@ final class VirusTotalClient
         $endpoint = "/files/{$hash}";
         $response = $this->makeRequest('GET', $endpoint);
         
-        if (!$response['success']) {
+        if (! $response['success']) {
             return [
                 'success' => false,
                 'error' => $response['error'],
@@ -243,7 +243,7 @@ final class VirusTotalClient
         
         $response = $this->makeRequest('POST', $endpoint, $data);
         
-        if (!$response['success']) {
+        if (! $response['success']) {
             return [
                 'success' => false,
                 'error' => $response['error']
@@ -280,7 +280,7 @@ final class VirusTotalClient
         
         $response = $this->makeRequest('GET', $endpoint);
         
-        if (!$response['success']) {
+        if (! $response['success']) {
             return [
                 'success' => false,
                 'error' => $response['error'],
@@ -336,7 +336,7 @@ final class VirusTotalClient
         
         if ($method === 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
-            if (!empty($data)) {
+            if (! empty($data)) {
                 $headers[] = 'Content-Type: application/x-www-form-urlencoded';
                 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
             }
@@ -415,7 +415,7 @@ final class VirusTotalClient
     {
         $response = $this->makeRequest('GET', '/users/' . $this->apiKey);
         
-        if (!$response['success']) {
+        if (! $response['success']) {
             return [
                 'success' => false,
                 'error' => $response['error']

@@ -39,24 +39,24 @@ class Auth
         
         // Busca usuário
         $user = $this->findUser($email, $companyCode);
-        if (!$user) {
+        if (! $user) {
             $this->incrementFailedAttempts($email);
             throw new AuthException('Credenciais inválidas');
         }
         
         // Verifica senha
-        if (!password_verify($password, $user['password'])) {
+        if (! password_verify($password, $user['password'])) {
             $this->incrementFailedAttempts($email);
             throw new AuthException('Credenciais inválidas');
         }
         
         // Verifica status do usuário
-        if (!$user['active']) {
+        if (! $user['active']) {
             throw new AuthException('Usuário inativo');
         }
         
         // Verifica status da empresa
-        if (!$user['company_active']) {
+        if (! $user['company_active']) {
             throw new AuthException('Empresa inativa');
         }
         
@@ -80,12 +80,12 @@ class Auth
             ->where('active', 1)
             ->first();
             
-        if (!$user) {
+        if (! $user) {
             throw new AuthException('Usuário não encontrado');
         }
         
         // Verifica código TOTP
-        if (!$this->verifyTOTP($user['two_factor_secret'], $code)) {
+        if (! $this->verifyTOTP($user['two_factor_secret'], $code)) {
             $this->logSecurityEvent('2fa_failure', [
                 'user_id' => $userId,
                 'ip' => $_SERVER['REMOTE_ADDR']
@@ -140,7 +140,7 @@ class Auth
     {
         $sessionData = $this->cache->get("session:{$token}");
         
-        if (!$sessionData || $sessionData['expires_at'] < time()) {
+        if (! $sessionData || $sessionData['expires_at'] < time()) {
             return false;
         }
         
@@ -153,7 +153,7 @@ class Auth
             ->where('companies.active', 1)
             ->first();
             
-        if (!$user) {
+        if (! $user) {
             $this->cache->delete("session:{$token}");
             return false;
         }
@@ -236,7 +236,7 @@ class Auth
      */
     public function hasPermission(string $module, string $permission): bool
     {
-        if (!$this->currentUser) {
+        if (! $this->currentUser) {
             return false;
         }
         
@@ -419,12 +419,12 @@ class AuthMiddleware
         
         // Verifica token
         $token = $request->header('authorization');
-        if (!$token || !str_starts_with($token, 'Bearer ')) {
+        if (! $token || ! str_starts_with($token, 'Bearer ')) {
             return new Response(['error' => 'Token não fornecido'], 401);
         }
         
         $token = substr($token, 7);
-        if (!$auth->authenticateToken($token)) {
+        if (! $auth->authenticateToken($token)) {
             return new Response(['error' => 'Token inválido ou expirado'], 401);
         }
         
@@ -450,7 +450,7 @@ class PermissionMiddleware
     {
         $auth = App::getInstance()->get('auth');
         
-        if (!$auth->hasPermission($this->module, $this->permission)) {
+        if (! $auth->hasPermission($this->module, $this->permission)) {
             return new Response(['error' => 'Acesso negado'], 403);
         }
         

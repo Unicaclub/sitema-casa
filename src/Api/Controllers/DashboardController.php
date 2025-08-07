@@ -25,7 +25,7 @@ final class DashboardController extends ControladorBase
     {
         $this->autorizar('dashboard.visualizar');
         
-        return $this->cacheado('metricas_dashboard', function() use ($request) {
+        return $this->cacheado('metricas_dashboard', function () use ($request) {
             $periodo = $request->query('period', '30'); // dias
             $dataInicio = Carbon::now()->subDays((int)$periodo)->startOfDay();
             
@@ -53,7 +53,7 @@ final class DashboardController extends ControladorBase
         $periodo = $request->query('period', '30');
         $agruparPor = $request->query('group_by', 'day'); // day, week, month
         
-        return $this->cacheado("grafico_vendas_{$periodo}_{$agruparPor}", function() use ($periodo, $agruparPor) {
+        return $this->cacheado("grafico_vendas_{$periodo}_{$agruparPor}", function () use ($periodo, $agruparPor) {
             $dataInicio = Carbon::now()->subDays((int)$periodo)->startOfDay();
             
             $query = $this->database->table('vendas')
@@ -101,7 +101,7 @@ final class DashboardController extends ControladorBase
         
         $periodo = $request->query('period', '12');
         
-        return $this->cacheado("grafico_receitas_{$periodo}", function() use ($periodo) {
+        return $this->cacheado("grafico_receitas_{$periodo}", function () use ($periodo) {
             $dataInicio = Carbon::now()->subMonths((int)$periodo)->startOfMonth();
             
             $query = $this->database->table('vendas')
@@ -122,7 +122,7 @@ final class DashboardController extends ControladorBase
                           ->get();
             
             return [
-                'rotulos' => $dados->map(function($item) {
+                'rotulos' => $dados->map(function ($item) {
                     return Carbon::createFromDate($item->ano, $item->mes)->format('M/Y');
                 })->toArray(),
                 'conjuntos_dados' => [
@@ -149,7 +149,7 @@ final class DashboardController extends ControladorBase
         $limit = min(20, max(5, (int) $request->query('limit', 10)));
         $period = $request->query('period', '30');
         
-        return $this->cached("top_products_{$limit}_{$period}", function() use ($limit, $period) {
+        return $this->cached("top_products_{$limit}_{$period}", function () use ($limit, $period) {
             $startDate = Carbon::now()->subDays((int)$period)->startOfDay();
             
             $query = $this->database->table('venda_itens')
@@ -187,7 +187,7 @@ final class DashboardController extends ControladorBase
     {
         $this->authorize('dashboard.view');
         
-        return $this->cached('customer_insights', function() {
+        return $this->cached('customer_insights', function () {
             $query = $this->database->table('clientes');
             $this->applyTenantFilter($query);
             

@@ -67,7 +67,7 @@ class BlockchainIntegration
                 return false;
             }
             
-            if (!$this->isValidHash($currentBlock)) {
+            if (! $this->isValidHash($currentBlock)) {
                 return false;
             }
         }
@@ -104,7 +104,7 @@ class BlockchainIntegration
     {
         $contract = $this->findContract($contractId);
         
-        if (!$contract || !$this->validateContractConditions($contract, $params)) {
+        if (! $contract || ! $this->validateContractConditions($contract, $params)) {
             return ['success' => false, 'error' => 'Contract validation failed'];
         }
         
@@ -251,7 +251,7 @@ class BlockchainIntegration
     private function validateContractConditions(array $contract, array $params): bool
     {
         foreach ($contract['conditions'] as $condition) {
-            if (!$this->evaluateCondition($condition, $params)) {
+            if (! $this->evaluateCondition($condition, $params)) {
                 return false;
             }
         }
@@ -265,7 +265,7 @@ class BlockchainIntegration
         $operator = $condition['operator'];
         $value = $condition['value'];
         
-        if (!isset($params[$field])) {
+        if (! isset($params[$field])) {
             return false;
         }
         
@@ -301,7 +301,7 @@ class BlockchainIntegration
     private function matchesCriteria(array $transaction, array $criteria): bool
     {
         foreach ($criteria as $key => $value) {
-            if (!isset($transaction[$key]) || $transaction[$key] !== $value) {
+            if (! isset($transaction[$key]) || $transaction[$key] !== $value) {
                 return false;
             }
         }

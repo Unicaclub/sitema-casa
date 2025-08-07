@@ -21,7 +21,7 @@ class EventBus
      */
     public function listen(string $event, $listener, int $priority = 0): void
     {
-        if (!isset($this->listeners[$event])) {
+        if (! isset($this->listeners[$event])) {
             $this->listeners[$event] = [];
         }
         
@@ -43,7 +43,7 @@ class EventBus
     {
         $results = [];
         
-        if (!isset($this->listeners[$event])) {
+        if (! isset($this->listeners[$event])) {
             return $results;
         }
         
@@ -233,7 +233,7 @@ class EventBus
      */
     public function unlisten(string $event, $listener): void
     {
-        if (!isset($this->listeners[$event])) {
+        if (! isset($this->listeners[$event])) {
             return;
         }
         
@@ -274,7 +274,7 @@ class EventBus
      */
     public function hasListeners(string $event): bool
     {
-        return isset($this->listeners[$event]) && !empty($this->listeners[$event]);
+        return isset($this->listeners[$event]) && ! empty($this->listeners[$event]);
     }
 }
 
@@ -355,7 +355,7 @@ class NotificationListener extends EventListener
 {
     public function handle(string $event, $data)
     {
-        if (!$this->shouldHandle($event, $data)) {
+        if (! $this->shouldHandle($event, $data)) {
             return;
         }
         

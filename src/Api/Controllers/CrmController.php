@@ -80,7 +80,7 @@ final class CrmController extends ControladorBase
         
         $customerData = $customer->first();
         
-        if (!$customerData) {
+        if (! $customerData) {
             return $this->error('Cliente não encontrado', 404);
         }
         
@@ -192,7 +192,7 @@ final class CrmController extends ControladorBase
         
         $this->applyTenantFilter($customer);
         
-        if (!$customer->exists()) {
+        if (! $customer->exists()) {
             return $this->error('Cliente não encontrado', 404);
         }
         
@@ -252,7 +252,7 @@ final class CrmController extends ControladorBase
         
         $this->applyTenantFilter($customer);
         
-        if (!$customer->exists()) {
+        if (! $customer->exists()) {
             return $this->error('Cliente não encontrado', 404);
         }
         
@@ -321,7 +321,7 @@ final class CrmController extends ControladorBase
     {
         $this->authorize('crm.view');
         
-        return $this->cached('crm_stats', function() {
+        return $this->cached('crm_stats', function () {
             $query = $this->database->table('clientes');
             $this->applyTenantFilter($query);
             

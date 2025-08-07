@@ -43,12 +43,12 @@ final class RedisManager
                 $this->config['timeout']
             );
             
-            if (!$connected) {
+            if (! $connected) {
                 throw new Exception('Failed to connect to Redis server');
             }
             
             // Autenticar se necessário
-            if (!empty($this->config['password'])) {
+            if (! empty($this->config['password'])) {
                 $this->redis->auth($this->config['password']);
             }
             
@@ -61,7 +61,7 @@ final class RedisManager
             $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_JSON);
             
             // Configurar prefix
-            if (!empty($this->keyPrefix)) {
+            if (! empty($this->keyPrefix)) {
                 $this->redis->setOption(Redis::OPT_PREFIX, $this->keyPrefix);
             }
             
@@ -78,7 +78,7 @@ final class RedisManager
      */
     public function isConnected(): bool
     {
-        if (!$this->redis || !$this->connected) {
+        if (! $this->redis || ! $this->connected) {
             return false;
         }
         
@@ -96,7 +96,7 @@ final class RedisManager
      */
     public function set(string $key, mixed $value, int $ttl = 0): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -117,7 +117,7 @@ final class RedisManager
      */
     public function get(string $key): mixed
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return null;
         }
         
@@ -135,7 +135,7 @@ final class RedisManager
      */
     public function exists(string $key): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -152,7 +152,7 @@ final class RedisManager
      */
     public function delete(string $key): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -169,7 +169,7 @@ final class RedisManager
      */
     public function increment(string $key, int $value = 1): int
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return 0;
         }
         
@@ -186,7 +186,7 @@ final class RedisManager
      */
     public function decrement(string $key, int $value = 1): int
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return 0;
         }
         
@@ -203,7 +203,7 @@ final class RedisManager
      */
     public function expire(string $key, int $seconds): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -220,7 +220,7 @@ final class RedisManager
      */
     public function ttl(string $key): int
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return -1;
         }
         
@@ -237,7 +237,7 @@ final class RedisManager
      */
     public function keys(string $pattern): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [];
         }
         
@@ -254,7 +254,7 @@ final class RedisManager
      */
     public function flush(): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -271,7 +271,7 @@ final class RedisManager
      */
     public function hSet(string $key, string $field, mixed $value): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -285,7 +285,7 @@ final class RedisManager
     
     public function hGet(string $key, string $field): mixed
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return null;
         }
         
@@ -300,7 +300,7 @@ final class RedisManager
     
     public function hGetAll(string $key): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [];
         }
         
@@ -314,7 +314,7 @@ final class RedisManager
     
     public function hDel(string $key, string $field): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -331,7 +331,7 @@ final class RedisManager
      */
     public function lPush(string $key, mixed ...$values): int
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return 0;
         }
         
@@ -345,7 +345,7 @@ final class RedisManager
     
     public function rPush(string $key, mixed ...$values): int
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return 0;
         }
         
@@ -359,7 +359,7 @@ final class RedisManager
     
     public function lPop(string $key): mixed
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return null;
         }
         
@@ -374,7 +374,7 @@ final class RedisManager
     
     public function rPop(string $key): mixed
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return null;
         }
         
@@ -389,7 +389,7 @@ final class RedisManager
     
     public function lRange(string $key, int $start, int $end): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [];
         }
         
@@ -406,7 +406,7 @@ final class RedisManager
      */
     public function sAdd(string $key, mixed ...$values): int
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return 0;
         }
         
@@ -420,7 +420,7 @@ final class RedisManager
     
     public function sMembers(string $key): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [];
         }
         
@@ -434,7 +434,7 @@ final class RedisManager
     
     public function sIsMember(string $key, mixed $value): bool
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return false;
         }
         
@@ -448,7 +448,7 @@ final class RedisManager
     
     public function sRem(string $key, mixed ...$values): int
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return 0;
         }
         
@@ -465,7 +465,7 @@ final class RedisManager
      */
     public function pipeline(callable $callback): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [];
         }
         
@@ -484,7 +484,7 @@ final class RedisManager
      */
     public function transaction(callable $callback): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [];
         }
         
@@ -504,7 +504,7 @@ final class RedisManager
      */
     public function info(): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [];
         }
         
@@ -521,7 +521,7 @@ final class RedisManager
      */
     public function getStats(): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [
                 'connected' => false,
                 'status' => 'disconnected'
@@ -568,7 +568,7 @@ final class RedisManager
      */
     public function rateLimit(string $key, int $maxRequests, int $windowSeconds): array
     {
-        if (!$this->isConnected()) {
+        if (! $this->isConnected()) {
             return [
                 'allowed' => true,
                 'remaining' => $maxRequests,

@@ -94,7 +94,7 @@ final class VendasController extends ControladorBase
         
         $saleData = $sale->first();
         
-        if (!$saleData) {
+        if (! $saleData) {
             return $this->error('Venda não encontrada', 404);
         }
         
@@ -151,7 +151,7 @@ final class VendasController extends ControladorBase
         
         $this->applyTenantFilter($customer);
         
-        if (!$customer->exists()) {
+        if (! $customer->exists()) {
             return $this->error('Cliente não encontrado', 404);
         }
         
@@ -172,7 +172,7 @@ final class VendasController extends ControladorBase
                 
                 $productData = $product->first();
                 
-                if (!$productData) {
+                if (! $productData) {
                     throw new \Exception("Produto ID {$item['produto_id']} não encontrado");
                 }
                 
@@ -269,7 +269,7 @@ final class VendasController extends ControladorBase
         
         $saleData = $sale->first();
         
-        if (!$saleData) {
+        if (! $saleData) {
             return $this->error('Venda não encontrada', 404);
         }
         
@@ -316,7 +316,7 @@ final class VendasController extends ControladorBase
         
         $saleData = $sale->first();
         
-        if (!$saleData) {
+        if (! $saleData) {
             return $this->error('Venda não encontrada', 404);
         }
         
@@ -364,7 +364,7 @@ final class VendasController extends ControladorBase
     {
         $this->authorize('vendas.view');
         
-        return $this->cached('sales_goals', function() use ($request) {
+        return $this->cached('sales_goals', function () use ($request) {
             $period = $request->query('period', 'month'); // month, quarter, year
             
             $currentDate = Carbon::now();
@@ -447,7 +447,7 @@ final class VendasController extends ControladorBase
         $period = (int) $request->query('period', 30); // days
         $startDate = Carbon::now()->subDays($period)->startOfDay();
         
-        return $this->cached("sales_by_salesperson_{$period}", function() use ($startDate) {
+        return $this->cached("sales_by_salesperson_{$period}", function () use ($startDate) {
             $query = $this->database->table('vendas')
                 ->join('users', 'vendas.usuario_id', '=', 'users.id')
                 ->select([
@@ -502,7 +502,7 @@ final class VendasController extends ControladorBase
      */
     private function getSalesStats(): array
     {
-        return $this->cached('sales_stats', function() {
+        return $this->cached('sales_stats', function () {
             $query = $this->database->table('vendas')
                 ->selectRaw('
                     COUNT(*) as total,

@@ -371,7 +371,7 @@ final class SupremoNLPEngine
         
         // Context analysis (if provided)
         $contextAnalysis = [];
-        if (!empty($context)) {
+        if (! empty($context)) {
             $contextAnalysis = [
                 'processed_context' => $this->preprocessText($context, $language),
                 'context_entities' => $this->extractEntitiesSupremo($context)['entities'],

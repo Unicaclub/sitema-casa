@@ -311,7 +311,7 @@ final class CacheManager
      */
     public function clearLayer(string $layer): int
     {
-        if (!isset($this->layers[$layer])) {
+        if (! isset($this->layers[$layer])) {
             return 0;
         }
         

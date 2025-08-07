@@ -71,7 +71,7 @@ final class CacheOtimizado
         ];
         
         foreach ($dadosCriticos as $chave => $callback) {
-            if (!$this->cache->has($chave)) {
+            if (! $this->cache->has($chave)) {
                 $this->remember($chave, $callback);
             }
         }

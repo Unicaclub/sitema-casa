@@ -111,7 +111,7 @@ final class ServicoEventos
             // Limpar e validar CPF
             $cpf = $this->limparCpf($cpf);
             
-            if (!$this->validarCpf($cpf)) {
+            if (! $this->validarCpf($cpf)) {
                 return [
                     'sucesso' => false,
                     'erro' => 'CPF inválido'
@@ -147,7 +147,7 @@ final class ServicoEventos
             
             $cliente = $this->database->fetchRow($query, [$cpf]);
             
-            if (!$cliente) {
+            if (! $cliente) {
                 return [
                     'sucesso' => false,
                     'erro' => 'Cliente não encontrado',
@@ -187,7 +187,7 @@ final class ServicoEventos
         try {
             $cpf = $this->limparCpf($dados_cliente['cpf_cliente']);
             
-            if (!$this->validarCpf($cpf)) {
+            if (! $this->validarCpf($cpf)) {
                 return [
                     'sucesso' => false,
                     'erro' => 'CPF inválido'
@@ -300,7 +300,7 @@ final class ServicoEventos
                 [$dados_venda['id_lista']]
             );
             
-            if (!$lista) {
+            if (! $lista) {
                 throw new Exception('Lista não encontrada ou inativa');
             }
             
@@ -395,7 +395,7 @@ final class ServicoEventos
         try {
             $cpf = $this->limparCpf($cpf);
             
-            if (!$this->validarCpf($cpf)) {
+            if (! $this->validarCpf($cpf)) {
                 return [
                     'sucesso' => false,
                     'erro' => 'CPF inválido'
@@ -425,7 +425,7 @@ final class ServicoEventos
             
             $ingresso = $this->database->fetchRow($query, [$cpf, $id_evento]);
             
-            if (!$ingresso) {
+            if (! $ingresso) {
                 return [
                     'sucesso' => false,
                     'erro' => 'Ingresso não encontrado ou inválido'
@@ -506,7 +506,7 @@ final class ServicoEventos
                 [$id_evento]
             );
             
-            if (!$evento) {
+            if (! $evento) {
                 return [
                     'sucesso' => false,
                     'erro' => 'Evento não encontrado'

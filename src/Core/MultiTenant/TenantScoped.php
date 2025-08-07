@@ -59,7 +59,7 @@ trait TenantScoped
             
             if ($tenantId) {
                 $tenantColumn = $model->getTenantColumn();
-                if (!isset($model->attributes[$tenantColumn])) {
+                if (! isset($model->attributes[$tenantColumn])) {
                     $model->setAttribute($tenantColumn, $tenantId);
                 }
             }
@@ -102,7 +102,7 @@ trait TenantScoped
      */
     public function validateTenantAccess(): void
     {
-        if (!$this->belongsToCurrentTenant()) {
+        if (! $this->belongsToCurrentTenant()) {
             $tenantManager = app(TenantManager::class);
             $tenantColumn = $this->getTenantColumn();
             
