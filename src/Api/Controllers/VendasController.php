@@ -234,6 +234,7 @@ final class VendasController extends ControladorBase
                 ->first();
             
             $this->clearCache('sales_*');
+            $this->clearCache('sales_stats');
             
             return $this->success($sale, 'Venda criada com sucesso', 201);
             
@@ -293,6 +294,7 @@ final class VendasController extends ControladorBase
             ->first();
         
         $this->clearCache('sales_*');
+        $this->clearCache('sales_stats');
         
         return $this->success($updatedSale, 'Venda atualizada com sucesso');
     }
@@ -344,6 +346,7 @@ final class VendasController extends ControladorBase
             $this->database->commit();
             
             $this->clearCache('sales_*');
+            $this->clearCache('sales_stats');
             
             return $this->success(null, 'Venda removida com sucesso');
             
@@ -499,20 +502,26 @@ final class VendasController extends ControladorBase
      */
     private function getSalesStats(): array
     {
-        $query = $this->database->table('vendas');
-        $this->applyTenantFilter($query);
-        
-        $total = $query->count();
-        $pendentes = $query->where('status', 'pendente')->count();
-        $concluidas = $query->where('status', 'concluida')->count();
-        $canceladas = $query->where('status', 'cancelada')->count();
-        
-        return [
-            'total' => $total,
-            'pendentes' => $pendentes,
-            'concluidas' => $concluidas,
-            'canceladas' => $canceladas,
-        ];
+        return $this->cached('sales_stats', function() {
+            $query = $this->database->table('vendas')
+                ->selectRaw('
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN status = "pendente" THEN 1 END) as pendentes,
+                    COUNT(CASE WHEN status = "concluida" THEN 1 END) as concluidas,
+                    COUNT(CASE WHEN status = "cancelada" THEN 1 END) as canceladas
+                ');
+            
+            $this->applyTenantFilter($query);
+            
+            $stats = $query->first();
+            
+            return [
+                'total' => (int) $stats['total'],
+                'pendentes' => (int) $stats['pendentes'],
+                'concluidas' => (int) $stats['concluidas'],
+                'canceladas' => (int) $stats['canceladas'],
+            ];
+        }, 300);
     }
     
     /**
