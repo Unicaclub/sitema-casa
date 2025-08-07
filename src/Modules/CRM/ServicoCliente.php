@@ -24,14 +24,15 @@ final class ServicoCliente
         private CacheInterface $cache,
         private TenantManager $tenantManager,
         private Logger $logger,
-    ) {}
+    ) {
+    }
     
     /**
      * Criar novo cliente
      */
     public function criarCliente(array $dados, ?int $tenantId = null): array
     {
-        $tenantId = $tenantId ?? $this->tenantManager->getCurrentTenantId();
+        $tenantId ??= $this->tenantManager->getCurrentTenantId();
 
         if (! $tenantId) {
             throw new ExcecaoValidacao('Tenant não definido');
