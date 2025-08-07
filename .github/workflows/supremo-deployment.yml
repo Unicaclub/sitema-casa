@@ -118,7 +118,7 @@ jobs:
           echo "🛡️ Security Score: $SECURITY_SCORE%"
 
       - name: 📈 Upload Quality Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: quality-reports
           path: |
@@ -213,7 +213,7 @@ jobs:
           esac
 
       - name: 📊 Upload Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results-php${{ matrix.php-version }}-${{ matrix.test-suite }}
@@ -475,7 +475,7 @@ jobs:
           echo "- **Post-Deployment**: ✅ Verified" >> deployment-report.md
 
       - name: 📤 Upload Deployment Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-report
           path: deployment-report.md
